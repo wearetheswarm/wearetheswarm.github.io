@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows / Linux
+Thumbs.db
+desktop.ini
+*~
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+
+# Local tooling
+.claude/settings.local.json
+node_modules/
+.env
+.env.*
+
+# Logs and temporary files
+*.log
+*.tmp
+.cache/
