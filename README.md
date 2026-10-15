@@ -14,6 +14,8 @@ Live at **https://wearetheswarm.ai**.
 | `robots.txt` | Allows all crawlers |
 | `CNAME` | Custom domain for GitHub Pages |
 | `.nojekyll` | Disables Jekyll processing; files are served as is |
+| `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Site icons (SVG for modern browsers, ICO with 16/32/48 px, 180 px for iOS) |
+| `brand/` | Bee logo: master `bee.svg`, transparent PNGs from 16 to 1024 px, `avatar-1024.png` for GitHub and social profiles |
 | `.github/workflows/pages.yml` | Deploys the repository root to GitHub Pages on every push to `main` |
 | `docs/` | Internal notes about the site |
 
