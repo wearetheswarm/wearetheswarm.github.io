@@ -62,7 +62,7 @@ What `locked` shuts out, checked on real runs:
   read-only sandbox, approvals off. One gap: Codex always loads your
   `~/.codex/AGENTS.md`. It adds no tool, but its content reaches the model,
   so keep secrets out of it.
-- **OpenClaw:** the agent that `wats setup openclaw --agent` prints may use
+- **OpenClaw:** the agent that `wats setup openclaw --agent` sets up may use
   the wats tools only, and is denied `exec`, `write` and `edit`. What it
   really gets depends on your OpenClaw configuration: check its tool
   policy and sandbox yourself.
@@ -90,6 +90,7 @@ container (the `wats` repository has an example in `deploy/agent/`).
 
 Your agent runs as you. The settings that keep it in check (halts, review,
 `agent.allow`, access, tools, budgets and run caps, the loop detector,
+the OpenClaw gateway address and whether plain http to it is allowed,
 updates, crash reports) live in `~/.wats/config.toml`. An agent that can
 write there could lift its own limits, so wats raises the bar, then
 watches:

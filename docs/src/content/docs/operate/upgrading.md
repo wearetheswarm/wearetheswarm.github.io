@@ -1,13 +1,23 @@
 ---
 title: Upgrading
-description: Install new releases with wats upgrade, roll back, and choose whether your node upgrades by itself.
+description: Install new releases with wats upgrade or Homebrew, roll back, and choose whether your node upgrades by itself.
 ---
+
+:::caution[On 0.3.0 or 0.3.1? Upgrade to 0.3.2 now]
+A node on 0.3.0 or 0.3.1 can stay cut off from a peer after the relay or
+the network was down for more than about 30 seconds, until it restarts.
+0.3.2 reconnects by itself. Run `wats upgrade` (or `brew upgrade wats`),
+then restart the node: a node that is cut off recovers at the restart.
+Nothing else changes: no new setting, no store or format change.
+:::
 
 ## In short
 
 - **`wats upgrade`** downloads the latest release for your platform,
   checks its signature against the key built into `wats`, and replaces the
   binary. The previous one is kept as `wats.old`.
+- **Installed with Homebrew?** Run `brew upgrade wats` instead:
+  `wats upgrade` says so rather than replacing the binary.
 - **Restart the node afterwards.** A running node keeps the old version
   until it restarts.
 - **`wats upgrade --rollback`** puts the previous binary back;
@@ -47,6 +57,20 @@ Then restart the node: Ctrl-C and `wats` again, or restart its service.
 why [Install](/docs/start/install/) puts it in `~/.local/bin`.
 
 Drafts and prereleases are never offered.
+
+### With Homebrew
+
+```sh
+brew upgrade wats
+```
+
+A `wats` installed by Homebrew is upgraded by Homebrew, which keeps track
+of the installed version: `wats upgrade` prints the command instead of
+replacing the binary, the update notice and `wats status` name
+`brew upgrade wats`, and [automatic upgrades](#automatic-upgrades) leave
+it alone. Restart the node afterwards, as with `wats upgrade`. A new
+release reaches the tap once its archives are published; prereleases
+never do.
 
 ### Roll back
 
@@ -93,7 +117,8 @@ wats config set update.auto true
 ```
 
 The node then installs a new release by itself, with the same checks as
-`wats upgrade`, once the release is **7 days old** (`update.delay`). It
+`wats upgrade`, once the release is **7 days old** (`update.delay`). A
+Homebrew install is left to Homebrew. It
 never restarts itself: it logs that a restart is needed, and the new
 version runs at the node's next start.
 
