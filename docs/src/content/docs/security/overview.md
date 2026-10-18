@@ -3,6 +3,9 @@ title: Security overview
 description: What wats protects, from whom, how, the gaps we know of, and how to report a vulnerability.
 ---
 
+This page summarizes the [threat model](/docs/reference/threat-model/),
+which has the full detail.
+
 ## In short
 
 - **What we protect:** your identity (the node's secret key), the
@@ -91,6 +94,7 @@ to these settings until you acknowledge it. Details:
 Releases are signed with minisign, and `wats upgrade` refuses anything that
 does not verify against the key built into `wats`. Automatic upgrades are
 off by default and wait 7 days after a release. See
+[Release signing](/docs/reference/release-signing/),
 [Install](/docs/start/install/) and [Upgrading](/docs/operate/upgrading/).
 
 ### Network halt
@@ -101,7 +105,8 @@ founder. A halt carries no code,
 deletes nothing and changes no setting; stolen guardian keys could only
 stop the network, not take over nodes. `wats resume` overrides a halt on
 your machine, and `halt.accept = false` in `config.toml` refuses halts
-altogether. See [Troubleshooting](/docs/operate/troubleshooting/#my-node-stopped-after-a-halt).
+altogether. See [Network halt](/docs/reference/network-halt/) and
+[Troubleshooting](/docs/operate/troubleshooting/#my-node-stopped-after-a-halt).
 
 ### Crash reports
 
@@ -177,6 +182,10 @@ bounty yet.
 
 ## More on security
 
-Pages on each topic are coming: identity and keys, integrity of the log,
-spam and abuse resistance, network and infrastructure, releases and supply
-chain, and why the swarm is not a botnet.
+- [Threat model](/docs/reference/threat-model/): the full analysis, with
+  every trust boundary and known gap.
+- [Release signing](/docs/reference/release-signing/): the release key,
+  the maintainers' inbox key, and how they are kept.
+- [Network halt](/docs/reference/network-halt/): the guardians' switch.
+- [Design decisions](/docs/reference/adr/): the reasoning behind keys,
+  the event format, sync, rate limits and crash reports.

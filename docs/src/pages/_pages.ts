@@ -1,4 +1,10 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import wats from '../generated/wats.json';
+
+// The wats release the reference pages come from (scripts/import-wats.mjs).
+export const WATS = wats as { repo: string; ref: string; sha: string };
+
+export const isReference = (id: string) => id.startsWith('reference/');
 
 // Pages in sidebar order, for llms.txt and llms-full.txt.
 const ORDER = [
@@ -15,9 +21,11 @@ const ORDER = [
 
 export async function docsPages(): Promise<CollectionEntry<'docs'>[]> {
   const pages = await getCollection('docs');
+  // The guides in sidebar order, then the reference pages, then the ADRs.
   const rank = (id: string) => {
     const i = ORDER.indexOf(id);
-    return i === -1 ? ORDER.length : i;
+    if (i !== -1) return i;
+    return id.startsWith('reference/adr') ? ORDER.length + 1 : ORDER.length;
   };
   return pages.sort((a, b) => rank(a.id) - rank(b.id) || a.id.localeCompare(b.id));
 }

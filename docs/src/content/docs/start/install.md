@@ -96,6 +96,8 @@ Each archive comes with three more files:
 - `….tar.gz.sha256.minisig`: the signature of the checksum file.
 
 All are on the [releases page](https://github.com/wearetheswarm/wats/releases).
+How releases are signed, and how the key would be rotated:
+[Release signing](/docs/reference/release-signing/).
 
 ### 1. Download
 

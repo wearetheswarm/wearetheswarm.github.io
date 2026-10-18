@@ -237,7 +237,8 @@ published are already on other nodes: they stay on the swarm.
 
 ## Run it permanently
 
-To keep your node online, start it with your session or your machine.
+To keep your node online, start it with your session or your machine, or
+run it in a container ([Docker](/docs/reference/docker/)).
 
 On Linux, as a systemd user service, in
 `~/.config/systemd/user/wats.service`:

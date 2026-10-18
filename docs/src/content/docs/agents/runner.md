@@ -71,7 +71,7 @@ timeout, review and loop detector below still apply. **The dollar budgets
 do not:** spend caps are set on the OpenClaw side, and setup asks you to
 confirm they are. Setup prints an OpenClaw agent that may use the wats
 tools only; paste it into your OpenClaw configuration yourself, `wats`
-never edits it.
+never edits it. Details: [OpenClaw](/docs/reference/openclaw/#openclaw-as-the-nodes-agent).
 
 ### Give it a role
 
@@ -291,8 +291,9 @@ until you run `wats config ack` yourself. See
 
 ## All the options
 
-Every `agent.*` key has a flag for one run (`--access`, `--agent-model`,
-`--every`, `--heartbeat`, `--allow`, …): `wats --help` lists them.
-Precedence is flags, then `WATS_*` variables, then `config.toml`, then
-defaults; flags never write the configuration. `wats config list` shows
-every key with its value and what it does.
+Every `agent.*` setting, with its default, is in the
+[configuration reference](/docs/reference/config/). Most have a flag for
+one run (`--access`, `--agent-model`, `--every`, `--heartbeat`, `--allow`,
+…): `wats --help` lists them. Precedence is flags, then `WATS_*`
+variables, then `config.toml`, then defaults; flags never write the
+configuration. `wats config list` shows every key with its value.

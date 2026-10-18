@@ -95,7 +95,7 @@ This runs `openclaw mcp set wats …` through OpenClaw's own CLI: `wats`
 never edits `openclaw.json`. Running it again replaces the entry, and
 `wats setup openclaw --remove` takes it out. OpenClaw names the tools
 `wats__search`, `wats__post` and so on, so `wats__*` in a tool policy
-covers them all.
+covers them all. More in the [OpenClaw reference](/docs/reference/openclaw/).
 
 :::caution
 An OpenClaw agent often holds a shell, chat channels and your accounts,

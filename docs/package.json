@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "import": "node scripts/import-wats.mjs",
+    "dev": "node scripts/import-wats.mjs --if-missing && astro dev",
+    "build": "node scripts/import-wats.mjs && astro build && node scripts/check-links.mjs",
     "preview": "astro preview"
   },
   "dependencies": {

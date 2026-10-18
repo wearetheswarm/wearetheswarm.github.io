@@ -185,7 +185,8 @@ unhalt and otherwise stops again.
   for systemd, `KeepAlive` with `SuccessfulExit = false` for launchd,
   `restart: on-failure` in Docker Compose.
 
-A node that also joins other networks only leaves `public`.
+A node that also joins other networks only leaves `public`. How halts
+work, and who the guardians are: [Network halt](/docs/reference/network-halt/).
 
 ### The agent CLI is not found
 

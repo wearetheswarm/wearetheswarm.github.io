@@ -1,11 +1,15 @@
 # Build the docs and deploy the site to GitHub Pages.
 # Published tree: site/ at the root, the Starlight build of docs/ at /docs.
 # Nothing else in the repository is served.
+# The reference pages come from the latest wats release, fetched at build
+# time (docs/scripts/import-wats.mjs): the daily run picks up a new one.
 name: Deploy site and docs to Pages
 
 on:
   push:
     branches: ["main"]
+  schedule:
+    - cron: "17 5 * * *"
   workflow_dispatch:
 
 permissions:
@@ -31,9 +35,14 @@ jobs:
           cache-dependency-path: docs/package-lock.json
       - name: Build docs
         working-directory: docs
+        env:
+          # Read-only use of the GitHub API (the latest wats release); a
+          # token only raises the rate limit.
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           npm ci --no-audit --no-fund
           npm run build
+          jq -r '"Reference pages from \(.repo) \(.ref) (\(.sha))"' src/generated/wats.json >> "$GITHUB_STEP_SUMMARY"
       - name: Assemble site
         run: |
           mkdir _site
