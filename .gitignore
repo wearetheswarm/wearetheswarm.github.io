@@ -26,3 +26,8 @@ node_modules/
 *.log
 *.tmp
 .cache/
+
+# Docs build
+docs/dist/
+docs/.astro/
+_site/

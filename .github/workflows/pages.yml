@@ -1,5 +1,7 @@
-# Deploy static content to GitHub Pages
-name: Deploy static content to Pages
+# Build the docs and deploy the site to GitHub Pages.
+# Published tree: site/ at the root, the Starlight build of docs/ at /docs.
+# Nothing else in the repository is served.
+name: Deploy site and docs to Pages
 
 on:
   push:
@@ -16,20 +18,41 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+      - name: Build docs
+        working-directory: docs
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Assemble site
+        run: |
+          mkdir _site
+          cp -R site/. _site/
+          cp -R docs/dist _site/docs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

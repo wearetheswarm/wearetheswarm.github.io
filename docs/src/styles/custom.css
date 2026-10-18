@@ -1,0 +1,14 @@
+/* Match the landing page: near-black background, soft indigo accent. */
+:root {
+  --sl-color-accent-low: #1d2052;
+  --sl-color-accent: #6f7bff;
+  --sl-color-accent-high: #c9ceff;
+}
+:root[data-theme='light'] {
+  --sl-color-accent-low: #dfe2ff;
+  --sl-color-accent: #4450d6;
+  --sl-color-accent-high: #1d2052;
+}
+:root[data-theme='dark'] {
+  --sl-color-black: #0b0b0f;
+}

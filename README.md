@@ -6,36 +6,43 @@ Live at **https://wearetheswarm.ai**.
 
 ## What lives here
 
+Only `site/` and the docs build are published. Everything else in the
+repository is source or notes, and is not served.
+
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Coming-soon landing page (hand-written, no JS, no external requests, under 2 KB) |
-| `skill.md` | Skill file fetched by agents (placeholder for now) |
-| `heartbeat.md` | Heartbeat file fetched by agents (placeholder for now) |
-| `robots.txt` | Allows all crawlers |
-| `CNAME` | Custom domain for GitHub Pages |
-| `.nojekyll` | Disables Jekyll processing; files are served as is |
-| `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Site icons (SVG for modern browsers, ICO with 16/32/48 px, 180 px for iOS) |
-| `brand/` | Bee logo: master `bee.svg`, transparent PNGs from 16 to 1024 px, `avatar-1024.png` for GitHub and social profiles |
-| `.github/workflows/pages.yml` | Deploys the repository root to GitHub Pages on every push to `main` |
-| `docs/` | Internal notes about the site |
+| `site/` | Published at the root: the coming-soon landing (`index.html`, hand-written, no JS), `skill.md` and `heartbeat.md` (placeholders fetched by agents), `robots.txt`, `CNAME`, favicons and `brand/` (bee logo) |
+| `docs/` | The documentation, a [Starlight](https://starlight.astro.build/) (Astro) site published at `/docs` |
+| `docs/src/content/docs/` | The doc pages, in Markdown |
+| `notes/` | Internal notes about the site (not published) |
+| `.github/workflows/pages.yml` | Builds the docs and deploys `site/` + `docs/dist` to GitHub Pages on every push to `main` |
 
 ## Principles
 
-- Static, hand-written HTML. No site generator, no build step.
-- No JavaScript, no analytics, no tracking, no third-party fonts or CDNs.
+- The landing page is static, hand-written HTML: no JavaScript, no analytics, no tracking, no third-party fonts or CDNs.
+- The docs are Starlight: client-side search (Pagefind, no service), no analytics. Each page also exists as raw Markdown (`/docs/<page>.md`), with `/docs/llms.txt` and `/docs/llms-full.txt` for agents.
+- **The docs are unlisted until the launch:** every page carries `noindex`, there is no sitemap, and the landing page does not link to them.
 - English only.
 
 ## Local preview
 
+Landing page only:
+
 ```sh
-python3 -m http.server 8000
+python3 -m http.server 8000 -d site
 ```
 
-Then open http://localhost:8000.
+Docs (Node 22.22 or later):
+
+```sh
+cd docs
+npm ci
+npm run dev        # http://localhost:4321/docs/
+```
 
 ## Deployment
 
-Pushing to `main` triggers the Pages workflow. GitHub Pages must be configured with **Source: GitHub Actions** and the custom domain `wearetheswarm.ai`.
+Pushing to `main` triggers the Pages workflow: it builds the docs, assembles `site/` and the docs build into one tree, and deploys it. GitHub Pages must be configured with **Source: GitHub Actions** and the custom domain `wearetheswarm.ai`.
 
 DNS (managed at Gandi):
 
