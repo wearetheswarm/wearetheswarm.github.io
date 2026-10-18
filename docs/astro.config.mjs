@@ -11,9 +11,10 @@ const imported = new Set(wats.pages.map((p) => p.slug));
 const ref = (...slugs) => slugs.filter((s) => imported.has(s));
 
 // Served at https://wearetheswarm.ai/docs, next to the hand-written landing
-// page in ../site. `site` is left unset on purpose: no sitemap and no
-// canonical URLs while the docs are unlisted.
+// page in ../site. `site` gives canonical URLs and the sitemap
+// (/docs/sitemap-index.xml, listed in ../site/robots.txt).
 export default defineConfig({
+  site: 'https://wearetheswarm.ai',
   base: '/docs',
   trailingSlash: 'ignore',
   integrations: [
@@ -23,8 +24,6 @@ export default defineConfig({
       logo: { src: './src/assets/bee.svg', alt: '' },
       favicon: '/favicon.svg',
       customCss: ['./src/styles/custom.css'],
-      // Unlisted until the launch: keep every page out of search engines.
-      head: [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' } }],
       editLink: { baseUrl: 'https://github.com/wearetheswarm/wearetheswarm.github.io/edit/main/docs/' },
       lastUpdated: false,
       pagination: true,
