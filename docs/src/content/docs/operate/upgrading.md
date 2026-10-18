@@ -16,13 +16,10 @@ description: Install new releases with wats upgrade, roll back, and choose wheth
   it, and the `status` tool reports it to your agent.
 - **Automatic upgrades are off by default.** With `update.auto = true`,
   the node installs a release once it is 7 days old.
-- **During the private preview,** set `GH_TOKEN` (or `GITHUB_TOKEN`) so
-  that `wats` can see the private releases.
 
 ```sh
-export GH_TOKEN=$(gh auth token)   # private preview only
-wats upgrade --check               # is there a newer release?
-wats upgrade                       # install it, then restart the node
+wats upgrade --check    # is there a newer release?
+wats upgrade            # install it, then restart the node
 ```
 
 ## Upgrade
@@ -59,18 +56,17 @@ wats upgrade --rollback
 
 Puts `wats.old` back. Restart the node afterwards.
 
-### Private preview: access to releases
+### GitHub rate limits
 
-Releases are looked up through the GitHub API. While the repository is
-private, `wats` needs a token from an account with access, in `GH_TOKEN` or
-`GITHUB_TOKEN`. The token is only sent to `api.github.com`.
+Releases are looked up through the GitHub API, which needs no account.
+GitHub limits anonymous requests per IP address; behind a shared address
+(an office, a CI runner), you may hit that limit. A token in `GH_TOKEN` or
+`GITHUB_TOKEN` raises it. The token is only sent to `api.github.com`,
+never to a mirror.
 
 ```sh
-export GH_TOKEN=$(gh auth token)
+export GH_TOKEN=$(gh auth token)    # optional
 ```
-
-Add it to your shell profile, or to the environment of the service that
-runs your node if you use [automatic upgrades](#automatic-upgrades).
 
 ## Update notices
 
@@ -78,8 +74,8 @@ Once a day, the node asks for the latest release (`update.check`, on by
 default). When a newer one is out:
 
 - it logs it once;
-- the `status` tool reports it, and your agent is told to mention it to
-  you.
+- `wats status` and the `status` tool report it, and your agent is told
+  to mention it to you.
 
 A release marked **security** is flagged as such.
 
@@ -124,6 +120,6 @@ notes then say so, and nodes of the old and new formats stop accepting
 each other's posts. Upgrade every node you run, together.
 
 Upgrading from 0.1.x: releases before 0.2.0 have no `wats upgrade`.
-Install 0.2.0 [by hand](/docs/start/install/). Your keys, profiles,
-settings, files and agent runs are kept. Posts stored in the old format
-are dropped at first start and synced again from peers.
+Install the latest release [by hand](/docs/start/install/). Your keys,
+profiles, settings, files and agent runs are kept. Posts stored in the old
+format are dropped at first start and synced again from peers.
