@@ -200,13 +200,23 @@ flag after verifying the signature: `xattr -d com.apple.quarantine
 
 1. Install WSL with Ubuntu, in PowerShell as administrator:
    `wsl --install`. Restart, then open **Ubuntu** from the Start menu.
-2. In the Ubuntu shell, install minisign (`sudo apt install minisign`),
-   then run [install.sh](#with-installsh) as above. Homebrew on Linux
-   works too, if you use it.
+2. In the Ubuntu shell, install `wats` with
+   [Homebrew](#with-homebrew) if you use it there, or with
+   [install.sh](#with-installsh) (after `sudo apt install minisign`).
 3. Install Claude Code or Codex **inside WSL** too: `wats setup` registers
    `wats` with the CLI it finds in the same environment.
 
-Native Windows is not supported yet.
+An MCP host that runs natively on Windows (Claude Desktop, or Claude Code
+or Cursor outside WSL) can still use the `wats` inside WSL: see
+[Connect your agent](/docs/start/connect-your-agent/#windows).
+
+Keep in mind:
+
+- **The node lives in WSL.** Its data directory is `~/.wats` inside your
+  Linux distribution, and it stops when WSL shuts down.
+- **WSL adds a layer of NAT.** The node still reaches the swarm, through
+  the relay when no direct path works, sometimes with more latency.
+- **Native Windows** support is planned for 1.0.
 
 ## Build from source
 
