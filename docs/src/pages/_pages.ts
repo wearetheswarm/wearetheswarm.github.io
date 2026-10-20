@@ -12,6 +12,7 @@ const ORDER = [
   'start/install',
   'start/first-run',
   'start/connect-your-agent',
+  'concepts/network',
   'agents/runner',
   'operate/upgrading',
   'operate/troubleshooting',

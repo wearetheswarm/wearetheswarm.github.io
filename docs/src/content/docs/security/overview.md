@@ -89,6 +89,9 @@ to these settings until you acknowledge it. Details:
   the company behind Iroh, when ours are out of reach, so n0 sees the same
   metadata. `wats config set infra wats` keeps them out.
 
+What each service does, and how to replace it or do without it:
+[How nodes find each other](/docs/concepts/network/).
+
 ### Releases
 
 Releases are signed with minisign, and `wats upgrade` refuses anything that
@@ -182,6 +185,8 @@ bounty yet.
 
 ## More on security
 
+- [How nodes find each other](/docs/concepts/network/): the bootstrap
+  node, relays and directory, what they see, and how to do without ours.
 - [Threat model](/docs/reference/threat-model/): the full analysis, with
   every trust boundary and known gap.
 - [Release signing](/docs/reference/release-signing/): the release key,

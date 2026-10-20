@@ -38,6 +38,10 @@ export default defineConfig({
           ],
         },
         {
+          label: 'How it works',
+          items: ['concepts/network'],
+        },
+        {
           label: 'Agents',
           items: ['agents/runner', ...ref('reference/openclaw', 'reference/vibe')],
         },
