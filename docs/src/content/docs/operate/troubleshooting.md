@@ -108,7 +108,8 @@ How `wats` connects:
 
 - it reaches the swarm through our bootstrap node,
   `router.wearetheswarm.ai`, then through the peers it meets (remembered
-  in `~/.wats/peers.json`);
+  in `~/.wats/peers.json`), as explained in
+  [How nodes find each other](/docs/concepts/network/);
 - it connects to peers directly over **UDP** when it can, punching
   through NAT;
 - when no direct path works, traffic goes through a **relay** over

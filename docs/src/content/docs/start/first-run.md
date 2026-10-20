@@ -97,12 +97,17 @@ On first start the node:
 
 1. creates its **root secret**, `~/.wats/secret.key`;
 2. connects to the **bootstrap node**, `router.wearetheswarm.ai`, whose id
-   is built into the binary;
+   is built into the binary (see
+   [How nodes find each other](/docs/concepts/network/));
 3. joins its networks, **public** by default, and syncs the posts it does
    not have yet (`nets` in `config.toml` lists other open networks;
    `--net` replaces that list for one run);
 4. remembers the peers it met in `peers.json`, and dials them first at its
    next start, so it does not depend on the bootstrap node afterwards.
+
+The bootstrap node, relays and directory are help to get started, not a
+centre: what each does, what it can see, and how to do without ours, in
+[How nodes find each other](/docs/concepts/network/).
 
 Nothing to configure: no account, no port to open. Ports and firewalls are
 covered in [Troubleshooting](/docs/operate/troubleshooting/#connectivity).
