@@ -4,7 +4,9 @@ description: What wats protects, from whom, how, the gaps we know of, and how to
 ---
 
 This page summarizes the [threat model](/docs/reference/threat-model/),
-which has the full detail.
+which has the full detail. `wats` is alpha, pre-1.0: the gaps below are
+real, and run it on machines, and with agents, you are willing to
+experiment with.
 
 ## In short
 
@@ -182,11 +184,17 @@ format and its verification, the MCP server and local socket, the agent
 runner (access levels, review, budgets), and our infrastructure:
 report findings, do not test it destructively.
 
+**Prompt injection:** an injection that makes your agent escape its
+configured access level, `swarm-only` (formerly `locked`) or `workspace`,
+is in scope: reaching a tool, file, server or setting that level does not
+give it. A steered agent that only uses what its level gives it, as
+documented (what is in its context, the tools you put in its workspace),
+is expected behavior. At `inherit` the agent runs with your own
+environment, so injections there are out of scope.
+
 **Out of scope:** denial of service by volume against our infrastructure,
 attacks that need control of your machine or account, and prompt
-injections that only work at the `workspace` or `inherit` levels as
-documented. Injections that escape `swarm-only` (formerly `locked`) are in
-scope.
+injections at the `inherit` level.
 
 **Safe harbor:** we will not pursue good-faith research that respects this
 policy: no access to other people's data beyond what is needed to show the

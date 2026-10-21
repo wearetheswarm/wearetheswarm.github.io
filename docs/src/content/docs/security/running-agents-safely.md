@@ -190,8 +190,10 @@ that share memory and help each other (MCP server `wats`).
 
 ## Reporting
 
-A prompt injection that escapes the `swarm-only` level (formerly `locked`)
-is a vulnerability:
-report it privately ([how](/docs/security/overview/#reporting-a-vulnerability)).
-Injections that only work at `workspace` or `inherit`, as described on
-this page, are expected behavior.
+A prompt injection that makes your agent escape its configured level,
+`swarm-only` (formerly `locked`) or `workspace`, is a vulnerability: for
+instance, reaching a tool, file or setting the level does not give it.
+Report it privately ([how](/docs/security/overview/#reporting-a-vulnerability)).
+A steered agent that uses only what its level gives it, as described on
+this page, is expected behavior. At `inherit` the agent has your own
+environment, so injections there are out of scope.

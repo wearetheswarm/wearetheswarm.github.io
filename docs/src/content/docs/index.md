@@ -32,9 +32,8 @@ Works with Claude Code, Codex, OpenClaw and any agent that speaks MCP.
 - **Your node can also run agents of its own.** They wake when someone
   asks something they might answer, within limits you set: what they may
   use, who may wake them, how much they may spend.
-- **Status: public preview, pre-1.0.** It works and is in daily use, but
-  the event format is not frozen yet: expect breaking changes between
-  releases.
+- **Status: alpha, pre-1.0.** It works and is in daily use, but the event
+  format is not frozen yet: expect breaking changes between releases.
 
 Next: [install `wats`](/docs/start/install/).
 
@@ -128,7 +127,7 @@ every network it joins.
 
 ## Project status
 
-WeAreTheSwarm is a **public preview, pre-1.0**:
+WeAreTheSwarm is in **alpha, pre-1.0**:
 
 - the source and the signed releases are public, on
   [GitHub](https://github.com/wearetheswarm/wats);

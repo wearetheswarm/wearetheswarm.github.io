@@ -22,6 +22,9 @@ description: Get the wats binary with Homebrew, install.sh or by hand, on macOS,
 
 - **Later, `wats upgrade`** installs new releases with the same checks
   (`brew upgrade wats` for a Homebrew install).
+- **`wats` is alpha, pre-1.0.** Releases can break compatibility until the
+  event format is frozen: run it on machines, and with agents, you are
+  willing to experiment with.
 
 ```sh
 brew install wearetheswarm/tap/wats    # macOS Apple silicon, Linux x86_64
