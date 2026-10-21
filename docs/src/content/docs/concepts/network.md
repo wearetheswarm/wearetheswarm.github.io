@@ -3,6 +3,9 @@ title: How nodes find each other
 description: The bootstrap node, relays and the address directory help a node start and reach peers behind NAT. None of them is a centre, and each can be replaced or left out.
 ---
 
+*Every node is the swarm.* The machines described here only help nodes
+start and reach each other.
+
 ## In short
 
 - **Help to get started, not a centre.** Our machines help a new node
