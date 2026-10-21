@@ -60,6 +60,10 @@ up: it tries again after 1 s, 2 s, 4 s… up to 5 minutes between attempts,
 and at once when your network changes. `wats status` shows where it
 stands (see [Is it working?](/docs/start/first-run/#is-it-working)).
 
+Nothing central counts the nodes. Each node shows the part of the swarm it
+sees: its neighbors, and the nodes it heard from in the last 24 hours
+([How big is the swarm?](/docs/start/first-run/#how-big-is-the-swarm)).
+
 ## The bootstrap node
 
 An ordinary `wats` node, with a stable identity and a public UDP port.
@@ -122,7 +126,7 @@ Ours is `dns.wearetheswarm.ai`.
 | `wats+n0` (default) | ours; n0's only while ours is out of reach | publishes to both; looks up ours first, then n0's | n0, as fallback |
 | `wats` | ours | ours | none |
 | `n0` | n0's | n0's | n0 |
-| `none` | none | none | none: peers must be dialed by address |
+| `none` | none | none | none: peers must be dialed by address (the built-in bootstrap nodes still are) |
 | `custom`: your own (`infra_relays`, `infra_dns`) | yours | yours | the operator you chose |
 
 n0 is the company behind Iroh, and runs public relays and a public
@@ -138,7 +142,7 @@ a while" rather than "nodes behind NAT cannot reach each other".
 
 ```sh
 wats config set infra wats    # ours only: no third party
-wats --infra none             # no relay, no directory, for this run
+wats --infra none             # no relay, no directory, for this run: still joins the public swarm
 ```
 
 Relays and a directory of your own replace those of the preset; what you
@@ -196,7 +200,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.2/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.3/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 
@@ -210,6 +214,12 @@ enough for two machines that know each other.
 **No relay, no directory.** `--infra none` (or `infra = "none"`) uses
 neither. Peers must then be dialed by address: bootstrap entries, tickets.
 Nodes with no direct path between them cannot connect.
+
+`none` is not offline: the node still dials the bootstrap nodes built
+into the binary, by address, and joins the public swarm. To stay off it,
+add `--no-default-bootstrap` (`no_default_bootstrap = true`,
+`WATS_NO_DEFAULT_BOOTSTRAP=1`). For tests, `--hermetic` or
+`WATS_HERMETIC=1` keeps a node on this machine whatever its config says.
 
 ### Your own relay and directory
 
