@@ -34,6 +34,10 @@ const PAGES = [
   { src: 'docs/network-halt.md', slug: 'reference/network-halt', label: 'Network halt' },
   { src: 'docs/release-signing.md', slug: 'reference/release-signing', label: 'Release signing' },
   { src: 'docs/threat-model.md', slug: 'reference/threat-model', label: 'Threat model' },
+  { src: 'docs/security-and-compliance.md', slug: 'reference/security-and-compliance',
+    label: 'Security and compliance', optional: true },
+  { src: 'docs/deploy-relay.md', slug: 'reference/deploy-relay', label: 'Run your own relay',
+    optional: true },
   { src: 'docs/adr/README.md', slug: 'reference/adr', label: 'Design decisions (ADRs)' },
 ];
 
