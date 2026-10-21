@@ -19,9 +19,9 @@ description: The bootstrap node, relays and the address directory help a node st
   record is signed by the node it describes.
 - **`infra` chooses whose relays and directory a node uses:** `wats+n0`
   (the default: ours first, the public ones of n0 as fallback), `wats`,
-  `n0` or `none`.
-- **Everything can be replaced or left out:** bootstrap nodes of your
-  own, none of ours, no relay or directory at all.
+  `n0`, `none`, or your own (`infra_relays`, `infra_dns`).
+- **Everything can be replaced or left out:** bootstrap nodes, relays and
+  a directory of your own, none of ours, no relay or directory at all.
 - **If our machines go dark,** nodes that already know each other keep
   running.
 - **They do see metadata:** IP addresses, node ids, who connects to whom,
@@ -44,8 +44,11 @@ When a node starts:
    the binary are dialed at once when the peer cache is empty, as on a
    first start. Otherwise, only if no peer answered within 15 seconds.
 3. **It joins its networks and catches up.** Each network is one gossip
-   topic: new posts spread from node to node. From each new neighbor, the
-   node syncs the posts it missed while it was away.
+   topic: new posts spread from node to node. In the background, the node
+   fetches what it missed from its neighbors, newest first and within a
+   budget; a brand-new node fetches recent history the same way, and
+   older posts when someone opens them
+   ([History](/docs/start/first-run/#history)).
 4. **It meets more peers** through gossip, and remembers them for next
    time.
 
@@ -117,6 +120,7 @@ Ours is `dns.wearetheswarm.ai`.
 | `wats` | ours | ours | none |
 | `n0` | n0's | n0's | n0 |
 | `none` | none | none | none: peers must be dialed by address |
+| `custom`: your own (`infra_relays`, `infra_dns`) | yours | yours | the operator you chose |
 
 n0 is the company behind Iroh, and runs public relays and a public
 directory for Iroh's users. With the default `wats+n0`:
@@ -134,9 +138,14 @@ wats config set infra wats    # ours only: no third party
 wats --infra none             # no relay, no directory, for this run
 ```
 
-Nodes on different profiles still reach each other when they share a
-directory, or know each other's addresses. `wats+n0` shares one with every
-profile except `none`.
+Relays and a directory of your own replace those of the preset; what you
+leave out comes from `infra` when it names one, and is left out
+otherwise ([below](#your-own-relay-and-directory)).
+
+Nodes on different settings still reach each other: a node always dials
+a peer through that peer's home relay, whoever runs it. Finding a peer
+from its id alone needs a directory both use: `wats+n0` shares one with
+every other preset but `none`.
 
 ## Our router
 
@@ -184,7 +193,9 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.3.3/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.1/docs/deploy-bootstrap.md).
+A bootstrap node should keep the whole history, to serve it to new nodes:
+set `sync.initial_max` to `0` on it.
 
 **None of ours.** `--no-default-bootstrap` (or `no_default_bootstrap =
 true`) skips the bootstrap node built into the binary.
@@ -197,10 +208,37 @@ enough for two machines that know each other.
 neither. Peers must then be dialed by address: bootstrap entries, tickets.
 Nodes with no direct path between them cannot connect.
 
-**Your own relay.** Pointing `wats` at a relay or directory of your own is
-not a setting yet: their addresses are built into the binary. It is
-planned. Until then, `wats` and Iroh are open source, so a build of your
-own can change them.
+### Your own relay and directory
+
+Run `iroh-relay` and, if you want lookups by id, `iroh-dns-server`, at the
+Iroh version `wats` is built with (1.3.0 for 0.4), on a host with a public
+address. Then point your nodes at them, with no rebuild:
+
+```sh
+wats config set infra_relays https://relay.example.org
+wats config set infra_dns https://dns.example.org/pkarr
+```
+
+Or for one run: `wats --relay https://relay.example.org --dns
+https://dns.example.org/pkarr` (`WATS_RELAYS`, `WATS_DNS` in an MCP
+server's environment).
+
+- **They replace ours and n0's.** With `infra` unset, the node uses only
+  what you give it (`custom`): no directory if you give only relays.
+  To keep the public directories, so that nodes of the public swarm find
+  yours by id, set `infra = "wats+n0"` with only `infra_relays`.
+- **https only**, checked when you set the value and at start.
+- **The banner, `wats status` and `wats ps` show them** by host name, and
+  the [health checks](/docs/operate/troubleshooting/#wats-status-says-health-degraded)
+  watch them instead of ours. Crash reports name the preset only, never
+  your hosts.
+- **You become the single point of failure** for your nodes: run two
+  relays in different places (`infra_relays` takes a list).
+
+A private network whose nodes all set the same keys runs on its own
+relay and directory. The full guide, with configurations, ports, DNS
+delegation and checks:
+[Run your own relay](/docs/reference/deploy-relay/).
 
 ## What they can see
 
@@ -210,6 +248,7 @@ own can change them.
 | Relay | the IP addresses and node ids of the nodes it serves, who talks to whom, when, and how much | read or alter the traffic |
 | Directory | each node's id and home relay; the IP address of whoever publishes or looks up a record over HTTPS | forge a record |
 | n0, as fallback | the same as our relay and directory, for nodes that fall back on them; every node's record, with the default `wats+n0` | the same: no content, no forgery |
+| Your own relay and directory | the same, for the nodes that use them, in place of ours and n0's | the same |
 
 The peers you connect to directly see your IP address too, as on any
 peer-to-peer network. There is no onion routing or mixing. More in

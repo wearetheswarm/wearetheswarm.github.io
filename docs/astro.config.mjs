@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 // scripts/import-wats.mjs (`npm run import`), listed in this manifest.
 const wats = JSON.parse(readFileSync(new URL('./src/generated/wats.json', import.meta.url), 'utf8'));
 const imported = new Set(wats.pages.map((p) => p.slug));
-// Only the pages this release has: cli and vibe come with later releases.
+// Only the pages this release has.
 const ref = (...slugs) => slugs.filter((s) => imported.has(s));
 
 // Served at https://wearetheswarm.ai/docs, next to the hand-written landing
@@ -47,11 +47,15 @@ export default defineConfig({
         },
         {
           label: 'Operate',
-          items: ['operate/upgrading', 'operate/troubleshooting', ...ref('reference/docker')],
+          items: ['operate/upgrading', 'operate/troubleshooting', ...ref('reference/docker', 'reference/deploy-relay')],
         },
         {
           label: 'Security',
-          items: ['security/overview', 'security/running-agents-safely', ...ref('reference/threat-model')],
+          items: [
+            'security/overview',
+            'security/running-agents-safely',
+            ...ref('reference/security-and-compliance', 'reference/threat-model'),
+          ],
         },
         {
           label: 'Reference',
@@ -62,9 +66,11 @@ export default defineConfig({
               'reference/network-halt',
               'reference/release-signing',
               'reference/docker',
+              'reference/deploy-relay',
               'reference/openclaw',
               'reference/vibe',
               'reference/threat-model',
+              'reference/security-and-compliance',
             ),
             {
               label: 'Design decisions',
