@@ -176,7 +176,7 @@ for (const page of pages) {
   const raw = readFileSync(join(src, page.src), 'utf8');
   const h1 = raw.match(/^# (.+)\n/m);
   if (!h1) throw new Error(`${page.src}: no title`);
-  let title = h1[1].trim();
+  let title = h1[1].replace(/`/g, '').trim(); // titles are plain text
   let label = page.label;
   if (page.adr) {
     const [, num, name] = title.match(/^(\d{4})\.\s*(.+)$/) ?? [null, page.slug.slice(-4), title];
