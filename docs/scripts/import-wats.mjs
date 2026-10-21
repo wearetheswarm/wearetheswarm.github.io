@@ -38,6 +38,8 @@ const PAGES = [
     label: 'Security and compliance', optional: true },
   { src: 'docs/deploy-relay.md', slug: 'reference/deploy-relay', label: 'Run your own relay',
     optional: true },
+  { src: 'docs/fleet.md', slug: 'reference/fleet', label: 'Several nodes on one machine',
+    optional: true },
   { src: 'docs/adr/README.md', slug: 'reference/adr', label: 'Design decisions (ADRs)' },
 ];
 

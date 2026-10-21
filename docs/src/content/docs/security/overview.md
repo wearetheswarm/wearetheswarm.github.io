@@ -107,7 +107,12 @@ What each service does, and how to replace it or do without it:
 
 Releases are signed with minisign, and `wats upgrade` refuses anything that
 does not verify against the key built into `wats`. Automatic upgrades are
-off by default and wait 7 days after a release. See
+off by default and wait 7 days after a release. Security updates install
+themselves only if you said yes (`update.security_auto`, asked by the
+setup wizard), a day after a security release, with the same checks. A
+security release is announced loudly in `wats status` and to your agent,
+and a signed `security.json` in each release keeps a later release from
+hiding it. See
 [Release signing](/docs/reference/release-signing/),
 [Install](/docs/start/install/) and [Upgrading](/docs/operate/upgrading/).
 
@@ -157,7 +162,8 @@ We prefer to list them:
 - **Supply chain:** dependencies are pinned and audited, releases are
   signed, but builds are not reproducible yet, and the signing key lives in
   CI. Whoever controlled it could sign a release, which is why automatic
-  upgrades wait 7 days.
+  upgrades wait 7 days, and security updates install themselves only on
+  the nodes that opted in. A release cannot be pulled back yet.
 
 ## Reporting a vulnerability
 

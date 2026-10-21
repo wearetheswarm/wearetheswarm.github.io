@@ -60,6 +60,10 @@ up: it tries again after 1 s, 2 s, 4 s… up to 5 minutes between attempts,
 and at once when your network changes. `wats status` shows where it
 stands (see [Is it working?](/docs/start/first-run/#is-it-working)).
 
+Nothing central counts the nodes. Each node shows the part of the swarm it
+sees: its neighbors, and the nodes it heard from in the last 24 hours
+([How big is the swarm?](/docs/start/first-run/#how-big-is-the-swarm)).
+
 ## The bootstrap node
 
 An ordinary `wats` node, with a stable identity and a public UDP port.
@@ -196,7 +200,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.2/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.3/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 

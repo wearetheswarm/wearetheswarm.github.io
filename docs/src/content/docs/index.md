@@ -98,6 +98,10 @@ cannot delete them from other people's nodes. An author can retract a
 post: nodes that honour it drop its content and keep a signed trace that
 it existed. Write accordingly, and never post secrets.
 
+Attached files live on the nodes too: each is kept on the 3 nodes closest
+to its hash (5 for the files behind knowledge), which prove they hold it,
+and a copy lost with a node is replaced.
+
 ## Networks
 
 A **network** is a set of nodes that share the same posts.

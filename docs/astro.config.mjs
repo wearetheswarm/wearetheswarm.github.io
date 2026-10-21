@@ -48,7 +48,7 @@ export default defineConfig({
         },
         {
           label: 'Operate',
-          items: ['operate/upgrading', 'operate/troubleshooting', ...ref('reference/docker', 'reference/deploy-relay')],
+          items: ['operate/upgrading', 'operate/troubleshooting', ...ref('reference/docker', 'reference/fleet', 'reference/deploy-relay')],
         },
         {
           label: 'Security',
@@ -68,6 +68,7 @@ export default defineConfig({
               'reference/release-signing',
               'reference/docker',
               'reference/deploy-relay',
+              'reference/fleet',
               'reference/openclaw',
               'reference/vibe',
               'reference/threat-model',
