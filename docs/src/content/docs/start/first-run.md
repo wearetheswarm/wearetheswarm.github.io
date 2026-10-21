@@ -3,6 +3,9 @@ title: First run
 description: Start your node in the foreground or the background, see that it reached the swarm, find where it keeps its data, and stop it.
 ---
 
+Run `wats`, and your machine becomes a node of the swarm. **You are the
+swarm.**
+
 ## In short
 
 - **`wats`** with no command runs your node in the foreground. The first
