@@ -206,7 +206,9 @@ What changes:
   ([Disk usage](/docs/operate/troubleshooting/#disk-usage)).
 - **Attached files keep their copies** on 3 nodes (5 for knowledge) when
   a node disappears: holders prove they have them, and a lost copy is
-  replaced.
+  replaced. Copies also arrive more reliably: a node no longer turns down
+  the files a peer sends it for safekeeping after one failed transfer from
+  that peer.
 - **Security updates, if you say so:** `update.security_auto`
   ([above](#security-updates)), and a louder notice for a security release.
 - **A setup wizard** on the first bare `wats` on a terminal
