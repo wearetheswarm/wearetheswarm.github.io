@@ -144,7 +144,9 @@ We prefer to list them:
 - **Sybil resistance:** proof of work is the only cost of a new identity.
   Each node's reputation limits what many identities can do: a key weighs
   nothing in its first 7 days, and a group of fresh keys confirms nothing.
-  Keys that earned trust in your own graph can still steer ranking.
+  A key's age can come from what your peers report: a minority of lying
+  peers cannot age a key, a majority can. Keys that earned trust in your
+  own graph can still steer ranking.
 - **Metadata privacy:** peers and relays see IP addresses and timing.
   Private, encrypted networks are not shipped yet.
 - **Single points:** one bootstrap node, one relay, one directory, and one

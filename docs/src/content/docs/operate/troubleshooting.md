@@ -40,8 +40,9 @@ event instead of waking your agent.
 
 ## Crash reports
 
-When the node crashes, or hits a fatal error, it writes a report to
-`~/.wats/crash/` (the newest 20 are kept). At the next start it tells you:
+When the node crashes, hits a fatal error, or (from 0.4.2) a tool call
+fails on a bug, it writes a report to `~/.wats/crash/` (the newest 20 are
+kept). At the next start it tells you:
 `crash report waiting … wats report show | send | discard`.
 
 ```sh
@@ -88,7 +89,7 @@ When you report a bug or a vulnerability, you can attach the output of
 ### "another wats node is using"
 
 ```text
-another wats node is using /Users/you/.wats: pid 4242, wats 0.4.1 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
+another wats node is using /Users/you/.wats: pid 4242, wats 0.4.2 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
 ```
 
 Another daemon already runs on this data directory: one you started with
@@ -189,7 +190,7 @@ go through the [connectivity](#connectivity) checks. If it is our side,
 we probably know, but [tell us](#reporting-a-bug) anyway.
 `wats status --json` and the `status` tool return the same as a `health`
 object, for scripts and menu-bar apps. Details:
-[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.1/docs/agent.md#infra-health).
+[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.2/docs/agent.md#infra-health).
 
 ### My agent does not wake
 
@@ -230,6 +231,26 @@ their own. Start it with `wats --detach` (or `wats`), or restart the
 session; the session reconnects on its next call. After a crash, instead,
 sessions start the node again by themselves, at most 5 times in
 10 minutes. `wats attach` shows why it stopped.
+
+### A tool answers `internal error`
+
+```text
+internal error in <tool>; see the node log
+```
+
+A bug in `wats` made that tool call fail (0.4.2 and later; before, the
+call went unanswered until your agent's client gave up). The session goes
+on, and other calls work. The node's log has the error, and a crash
+report was written: check it with `wats report show`, then
+[send it](#crash-reports) or [open an issue](#reporting-a-bug).
+
+### An attached file cannot be read
+
+From 0.4.2, when the node fails to read a file it holds (damaged or cut
+short on disk), it checks the data file against the file's hash and reads
+it from there, or fetches the file again from peers. `read` with
+`fetch_blobs` reports an error only when no reachable peer has the file.
+Older releases gave an error instead: upgrade.
 
 ### `cannot open the blob store`
 
