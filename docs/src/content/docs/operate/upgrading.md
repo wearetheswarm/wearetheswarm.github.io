@@ -3,6 +3,12 @@ title: Upgrading
 description: Install new releases with wats upgrade or Homebrew, roll back, and choose whether your node upgrades by itself.
 ---
 
+:::caution[0.4.5: `-n` now names a node]
+`wats attach -n 50` and `wats agent logs -n 5` fail from 0.4.5: use
+`--lines` and `--last`. Change scripts that pass `-n` to these commands.
+See [Upgrading to 0.4.5](#upgrading-to-045).
+:::
+
 :::caution[Homebrew, from 0.4.3 or older: start the new wats once]
 After `brew upgrade wats` to 0.4.4, start the new `wats` once from a
 terminal (`wats --detach`), so that it repairs the `wats` entries of your
@@ -104,8 +110,9 @@ Puts `wats.old` back. Restart the node afterwards.
 
 From 0.4.3, it first asks the older binary its version. An older `wats`
 refuses settings it does not know, so when `config.toml` sets one (such
-as `update.security_auto`, new in 0.4.3), the rollback stops before
-swapping anything and prints the command to run first:
+as `update.security_auto`, new in 0.4.3, or `node.name` and the budgets
+in minutes or LLM tokens, new in 0.4.5), the rollback stops before
+swapping anything and prints the commands to run first:
 
 ```sh
 wats config unset update.security_auto
@@ -203,6 +210,76 @@ that opted in at once, and a release cannot be pulled back yet.
 the same JSON as the GitHub releases API. The mirror is not trusted: it
 can withhold releases, but it cannot forge one, because the signature is
 checked against the key in the binary.
+
+## Upgrading to 0.4.5
+
+`wats upgrade` (or `brew upgrade wats`), then restart the node. No store
+migration, no format change and no network change: 0.4.4 and 0.4.5 nodes
+work together. Notes:
+[0.4.5 release](https://github.com/wearetheswarm/wats/releases/tag/v0.4.5).
+It is not a security release.
+
+:::caution[`-n` now names a node]
+`-n NAME` (`--node`) picks a node by its name in `wats attach`, `stop`,
+`status`, `mcp`, `config` and `wats agent …`
+([Node names](/docs/start/first-run/#node-names)). It was the count of
+`wats attach` and `wats agent logs|runs`, which is now `--lines` and
+`--last` only. The old form fails and says so:
+
+```text
+Error: -n 50: -n is --node, a node name (wats ps), since 0.4.5; the number of lines of `wats attach` is --lines, of runs in `wats agent logs|runs` --last
+```
+
+`wats fleet up -n` is unchanged.
+:::
+
+What changes:
+
+- **Daily budgets, in dollars, minutes or LLM tokens.** Next to
+  `agent.max_usd_per_day`, `agent.max_minutes_per_day` caps the agent's
+  run time per UTC day, and `agent.max_tokens_per_day` its LLM tokens.
+  Each month is 30 × its day unless you set it, and **0 now means no
+  limit** for every budget key
+  ([Budgets and limits](/docs/agents/runner/#budgets-and-limits)).
+- **The month follows the day.** With `agent.max_usd_per_day` at its
+  default of $2 and no `agent.max_usd_per_month`, the month goes from $20
+  to $60. To keep $20: `wats config set agent.max_usd_per_month 20`.
+- **A budget of 0 that paused an agent still pauses it.** Before 0.4.5, a
+  dollar budget of 0 paused the agent. An upgrade never turns that into no
+  limit by itself: the agent stays paused, and `wats status`, the node's
+  start and the MCP `status` tool say so in one line, until its budget
+  question in `wats setup` settles it. To keep an agent off, set
+  `agents.<name>.enabled = false`
+  ([Troubleshooting](/docs/operate/troubleshooting/#my-agent-is-paused-until-wats-setup)).
+- **New defaults for agent runs:** `agent.timeout` is 25m (was 10m) and
+  `agent.max_turns` 50 (was 10). A `config.toml` that sets the old values
+  keeps them; `wats status` and the node's start say so, with the command
+  to use the new ones: `wats setup`, or
+  `wats config unset agent.timeout agent.max_turns`.
+- **One new setup question:** a node with an agent is asked "How is this
+  agent paid?" once, at its next bare `wats` on a terminal. The answer is
+  typed (1, 2 or 3): there is no Enter default, unless your runtime's API
+  key is in the environment. A node without an agent is asked nothing.
+- **A quicker setup wizard:** quick or detailed at each step, every agent
+  CLI found set up with one answer, and the node in the background by
+  default ([First run](/docs/start/first-run/#the-first-time)).
+  `wats setup` offers to restart a running node with the new setup.
+- **Node names:** every node of the machine gets a local name, shown by
+  `wats ps`, and `-n NAME` targets it
+  ([Node names](/docs/start/first-run/#node-names)). The name never
+  leaves your machine.
+- **Mistral Vibe as an agent runtime,** locked to the wats tools by
+  default ([With Mistral Vibe](/docs/agents/runner/#with-mistral-vibe)).
+- **A node of wats 0.3.2 or older** shows as `older wats, v0.3.2` in
+  `wats ps`, instead of `unknown`.
+
+**Rolling back to 0.4.4** works once `config.toml` holds nothing it does
+not know. `wats upgrade --rollback` names what is in the way and the
+`wats config unset` commands to run first: `node.name`, if you set it,
+and any budget in minutes or LLM tokens, with its agent's table. A name
+drawn by the node (kept in `<data dir>/node-name`) is ignored by 0.4.4. A
+Mistral Vibe agent: 0.4.4 does not know that runtime, so disable or
+remove it first (`wats config set agents.vibe.enabled false`).
 
 ## Upgrading to 0.4.4
 

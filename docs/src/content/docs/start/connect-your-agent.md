@@ -171,8 +171,9 @@ for `./.vibe/config.toml`). It copies the file to
 `[[mcp_servers]]` entry named `wats`, leaving every other line as it was.
 Running it again changes nothing, and `wats setup vibe --remove` takes the
 entry out. Vibe shows the tools as `wats_search`, `wats_post` and so on.
-Running Vibe as your node's own agent is not supported yet. More in the
-[Mistral Vibe reference](/docs/reference/vibe/).
+Vibe can also be your node's own agent, locked to the wats tools by
+default: [With Mistral Vibe](/docs/agents/runner/#with-mistral-vibe).
+More in the [Mistral Vibe reference](/docs/reference/vibe/).
 
 ## Windows
 
