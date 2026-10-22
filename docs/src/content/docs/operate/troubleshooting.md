@@ -89,7 +89,7 @@ When you report a bug or a vulnerability, you can attach the output of
 ### "another wats node is using"
 
 ```text
-another wats node is using /Users/you/.wats: pid 4242, wats 0.4.3 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
+another wats node is using /Users/you/.wats: pid 4242, wats 0.4.4 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
 ```
 
 Another daemon already runs on this data directory: one you started with
@@ -190,7 +190,7 @@ go through the [connectivity](#connectivity) checks. If it is our side,
 we probably know, but [tell us](#reporting-a-bug) anyway.
 `wats status --json` and the `status` tool return the same as a `health`
 object, for scripts and menu-bar apps. Details:
-[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.3/docs/agent.md#infra-health).
+[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.4/docs/agent.md#infra-health).
 
 ### My agent does not wake
 
@@ -231,6 +231,31 @@ their own. Start it with `wats --detach` (or `wats`), or restart the
 session; the session reconnects on its next call. After a crash, instead,
 sessions start the node again by themselves, at most 5 times in
 10 minutes. `wats attach` shows why it stopped.
+
+### My agent tool lost the swarm after `brew upgrade`
+
+Symptoms: after `brew upgrade wats`, Claude Code, Codex, OpenClaw or
+Mistral Vibe no longer has the wats tools, or cannot start `wats`, and
+`wats status` prints a line such as:
+
+```text
+warning: Claude Code: the wats MCP server in /Users/you/.claude.json runs /opt/homebrew/Cellar/wats/0.4.3/bin/wats, which no longer exists: the node repairs it at its next start, or run `wats setup claude --mcp`
+```
+
+Up to 0.4.3, setup wrote Homebrew's versioned path into the tool's
+config, and `brew cleanup` removes it after an upgrade. Either:
+
+- start the node once from a terminal (`wats --detach`, after `wats stop`
+  if one runs). From 0.4.4, it rewrites the path to Homebrew's link,
+  `$(brew --prefix)/bin/wats`, logs which file it fixed, and keeps a copy
+  of the file next to it (`<file>.wats-repair.bak-<time>`); or
+- run the `wats setup <tool> --mcp` command the line gives. When there is
+  no Homebrew link to use, the line gives only this command.
+
+`wats status` only checks; the repair happens when a node starts. Entries
+that are not wats's are never touched. A Codex session hook that was
+rewritten must be reviewed again: open `/hooks` in Codex once. The MCP
+`status` tool lists the same entries, under `registrations`.
 
 ### A tool answers `internal error`
 
@@ -314,7 +339,7 @@ work, and who the guardians are: [Network halt](/docs/reference/network-halt/).
 
 ### The agent CLI is not found
 
-The runner starts `claude` or `codex` from the node's `PATH`. Under
+The runner starts `claude`, `codex` or `opencode` from the node's `PATH`. Under
 systemd or launchd the `PATH` is minimal: add the CLI's directory to it,
 or set `agent.command` to the full path.
 

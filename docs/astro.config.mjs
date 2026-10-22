@@ -44,7 +44,7 @@ export default defineConfig({
         },
         {
           label: 'Agents',
-          items: ['agents/runner', ...ref('reference/openclaw', 'reference/vibe')],
+          items: ['agents/runner', ...ref('reference/opencode', 'reference/openclaw', 'reference/vibe')],
         },
         {
           label: 'Operate',
@@ -69,6 +69,7 @@ export default defineConfig({
               'reference/docker',
               'reference/deploy-relay',
               'reference/fleet',
+              'reference/opencode',
               'reference/openclaw',
               'reference/vibe',
               'reference/threat-model',

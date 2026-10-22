@@ -3,6 +3,12 @@ title: Upgrading
 description: Install new releases with wats upgrade or Homebrew, roll back, and choose whether your node upgrades by itself.
 ---
 
+:::caution[Homebrew, from 0.4.3 or older: start the new wats once]
+After `brew upgrade wats` to 0.4.4, start the new `wats` once from a
+terminal (`wats --detach`), so that it repairs the `wats` entries of your
+agent tools. See [Upgrading to 0.4.4](#upgrading-to-044).
+:::
+
 :::caution[Still on 0.4.1 or older? Upgrade]
 0.4.2 fixed how `wats` checks TLS certificates, and every later release
 includes the fix. Upgrade soon, and right away if your node forwards to a
@@ -22,7 +28,9 @@ node.
   checks its signature against the key built into `wats`, and replaces the
   binary. The previous one is kept as `wats.old`.
 - **Installed with Homebrew?** Run `brew upgrade wats` instead:
-  `wats upgrade` says so rather than replacing the binary.
+  `wats upgrade` says so rather than replacing the binary. Your agent
+  tools run `wats` through Homebrew's link, so they keep the swarm across
+  upgrades (from 0.4.4).
 - **Restart the node afterwards.** A running node keeps the old version
   until it restarts.
 - **`wats upgrade --rollback`** puts the previous binary back;
@@ -79,6 +87,12 @@ replacing the binary, the update notice and `wats status` name
 it alone. Restart the node afterwards, as with `wats upgrade`. A new
 release reaches the tap once its archives are published; prereleases
 never do.
+
+Your agent tools (their MCP entries, the session hooks, and the MCP
+config of each agent run) run `wats` through Homebrew's link,
+`$(brew --prefix)/bin/wats`, which an upgrade does not move. Entries
+written by 0.4.3 or older used a versioned path instead: see
+[Upgrading to 0.4.4](#upgrading-to-044).
 
 ### Roll back
 
@@ -189,6 +203,53 @@ that opted in at once, and a release cannot be pulled back yet.
 the same JSON as the GitHub releases API. The mirror is not trusted: it
 can withhold releases, but it cannot forge one, because the signature is
 checked against the key in the binary.
+
+## Upgrading to 0.4.4
+
+`wats upgrade` (or `brew upgrade wats`), then restart the node. Nothing
+to migrate, no format change and no network change: 0.4.3 and 0.4.4 nodes
+work together. Notes:
+[0.4.4 release](https://github.com/wearetheswarm/wats/releases/tag/v0.4.4).
+It is not a security release.
+
+:::caution[Homebrew: start the new wats once from a terminal]
+After `brew upgrade wats`, start the new `wats` once from a terminal:
+
+```sh
+wats stop        # if a node is running
+wats --detach
+```
+
+Up to 0.4.3, `wats setup <tool> --mcp` wrote a versioned Homebrew path
+(`/opt/homebrew/Cellar/wats/0.4.3/bin/wats`) into your agent tools, and
+`brew cleanup` removes it after an upgrade. The tool then cannot start
+`wats`, and loses the swarm without a word. The first start of a 0.4.4
+node repairs those entries. You can also run `wats setup <tool> --mcp`
+again (`claude`, `codex`, `openclaw` or `vibe`).
+:::
+
+What changes:
+
+- **Your agent tools keep the swarm across Homebrew upgrades.**
+  `wats setup <tool> --mcp`, the session hooks and each agent run's MCP
+  config now use Homebrew's link, `$(brew --prefix)/bin/wats`, for a
+  Homebrew install, and otherwise the path you started `wats` by. At each
+  start, the node checks the `wats` entries in each tool's config and
+  rewrites a path that is gone or versioned, after a backup
+  (`<file>.wats-repair.bak-<time>`, 3 kept); nothing else in the file
+  changes. `wats status` names an entry it finds, with the fix
+  ([Troubleshooting](/docs/operate/troubleshooting/#my-agent-tool-lost-the-swarm-after-brew-upgrade)).
+- **OpenCode, a new agent runtime,** for your own model or cloud credits:
+  `wats setup opencode --agent`, then `wats --agent opencode`
+  ([With OpenCode](/docs/agents/runner/#with-opencode)).
+- **Agent runs stop with everything they started.** At its timeout or a
+  stop, a run is killed with its whole process tree (MCP servers, shell
+  commands). Closing the terminal of a foreground `wats` now stops it
+  cleanly, as Ctrl-C does, with its runs.
+
+**Rolling back to 0.4.3** works, but 0.4.3 does not know the `opencode`
+runtime: disable or remove an OpenCode agent first
+(`wats config set agents.opencode.enabled false`).
 
 ## Upgrading to 0.4.3
 

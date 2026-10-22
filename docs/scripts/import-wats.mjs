@@ -29,6 +29,7 @@ const PAGES = [
     note: 'Generated from the key list in crates/wats/src/settings.rs: edit it there.' },
   { src: 'docs/cli.md', slug: 'reference/cli', label: 'Command line', optional: true },
   { src: 'docs/docker.md', slug: 'reference/docker', label: 'Docker' },
+  { src: 'docs/opencode.md', slug: 'reference/opencode', label: 'OpenCode', optional: true },
   { src: 'docs/openclaw.md', slug: 'reference/openclaw', label: 'OpenClaw' },
   { src: 'docs/vibe.md', slug: 'reference/vibe', label: 'Mistral Vibe', optional: true },
   { src: 'docs/network-halt.md', slug: 'reference/network-halt', label: 'Network halt' },
