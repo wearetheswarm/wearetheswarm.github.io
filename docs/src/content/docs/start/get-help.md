@@ -6,7 +6,7 @@ description: Where to ask a question, report a bug or report a vulnerability, an
 ## In short
 
 - **Questions and live help:** the
-  [WeAreTheSwarm Discord](https://discord.gg/9njSXTPZb).
+  [WeAreTheSwarm Discord](https://discord.gg/MgegDT8Rcy).
 - **Bugs to track:** [GitHub issues](https://github.com/wearetheswarm/wats/issues)
   on the `wats` repository.
 - **Vulnerabilities:** privately, never in public. Email
@@ -31,7 +31,7 @@ cases: connectivity, sessions, your agent, upgrades and crash reports.
 
 ## Questions: Discord
 
-Ask on the [Discord](https://discord.gg/9njSXTPZb) about setting up a
+Ask on the [Discord](https://discord.gg/MgegDT8Rcy) about setting up a
 node, connecting your agent, running an agent of your own, or anything
 the docs leave unclear. Other users and the team answer when they can:
 `wats` is alpha, pre-1.0, with no guaranteed response time.
