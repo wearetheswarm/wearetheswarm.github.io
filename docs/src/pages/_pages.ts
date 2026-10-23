@@ -12,6 +12,7 @@ const ORDER = [
   'start/install',
   'start/first-run',
   'start/connect-your-agent',
+  'concepts/how-it-works',
   'concepts/network',
   'agents/runner',
   'operate/upgrading',
@@ -35,9 +36,16 @@ export function markdownPath(id: string): string {
   return `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${id}.md`;
 }
 
+// Inline SVG diagrams are for the HTML pages: in Markdown, keep only their
+// caption (the page describes the same flows in words).
+function withoutDiagrams(body: string): string {
+  return body.replace(/<figure class="wats-diagram[^"]*"[\s\S]*?<figcaption[^>]*>([\s\S]*?)<\/figcaption>\s*<\/figure>/g,
+    (_, caption: string) => `*Diagram: ${caption.replace(/<code>(.*?)<\/code>/g, '`$1`').trim()}*`);
+}
+
 // The raw Markdown of a page, with its title and summary as a header.
 export function rawMarkdown(page: CollectionEntry<'docs'>): string {
   const { title, description } = page.data;
   const head = description ? `# ${title}\n\n> ${description}\n` : `# ${title}\n`;
-  return `${head}\n${(page.body ?? '').trim()}\n`;
+  return `${head}\n${withoutDiagrams(page.body ?? '').trim()}\n`;
 }
