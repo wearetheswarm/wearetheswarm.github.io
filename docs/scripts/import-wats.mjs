@@ -169,6 +169,74 @@ function adrSummary(body) {
   return text ? `${status}. ${text}` : `${status}.`;
 }
 
+// The npm and PyPI wrappers (ADR 0035) are not published and their names
+// are placeholders: leave out the "Via npx or uvx (once published)" parts
+// of the guides (a section, a list item, or a paragraph with the code
+// block and pointer after it). Remove this once the wrappers are out.
+const UNPUBLISHED = /Via npx or uvx \(once published\)/;
+const PLACEHOLDERS = /Via npx or uvx|@wearetheswarm\/wats|wearetheswarm-wats/;
+function dropUnpublished(markdown, from) {
+  const lines = markdown.split('\n');
+  const out = [];
+  let i = 0;
+  const blank = (l) => l.trim() === '';
+  const skipFence = () => {
+    i++;
+    while (i < lines.length && !lines[i].startsWith('```')) i++;
+    i++;
+  };
+  while (i < lines.length) {
+    const line = lines[i];
+    if (line.startsWith('```')) {
+      const start = i;
+      skipFence();
+      out.push(...lines.slice(start, i));
+      continue;
+    }
+    if (!UNPUBLISHED.test(line)) {
+      out.push(line);
+      i++;
+      continue;
+    }
+    const heading = line.match(/^(#{2,6}) /);
+    const item = line.match(/^(\s*)[-*] /);
+    if (heading) {
+      // Up to the next heading of the same level or higher.
+      const level = heading[1].length;
+      i++;
+      while (i < lines.length) {
+        if (lines[i].startsWith('```')) { skipFence(); continue; }
+        const h = lines[i].match(/^(#{1,6}) /);
+        if (h && h[1].length <= level) break;
+        i++;
+      }
+    } else if (item) {
+      // Up to the next item of the list, or its end.
+      const indent = item[1].length;
+      i++;
+      while (i < lines.length && !blank(lines[i]) && lines[i].search(/\S/) > indent) i++;
+    } else {
+      // The paragraph, then a code block or pointer that belongs to it.
+      while (i < lines.length && !blank(lines[i])) i++;
+      for (;;) {
+        let j = i;
+        while (j < lines.length && blank(lines[j])) j++;
+        if (j >= lines.length) { i = j; break; }
+        if (lines[j].startsWith('```')) { i = j; skipFence(); continue; }
+        let k = j;
+        while (k < lines.length && !blank(lines[k])) k++;
+        if (/via-npx-or-uvx-once-published/.test(lines.slice(j, k).join('\n'))) { i = k; continue; }
+        break;
+      }
+      while (out.length && blank(out[out.length - 1])) out.pop();
+      out.push('');
+    }
+  }
+  const result = out.join('\n').replace(/\n{3,}/g, '\n\n');
+  if (PLACEHOLDERS.test(result)) throw new Error(`${from}: npx/uvx text left after dropUnpublished`);
+  return result;
+}
+
 const yaml = (s) => JSON.stringify(s); // JSON strings are valid YAML
 
 rmSync(OUT, { recursive: true, force: true });
@@ -184,7 +252,9 @@ for (const page of pages) {
     title = `ADR ${num}: ${name}`;
     label = `${num} ${name}`;
   }
-  const body = rewriteLinks(raw.slice(raw.indexOf(h1[0]) + h1[0].length), page.src).trim();
+  let md = raw.slice(raw.indexOf(h1[0]) + h1[0].length);
+  if (!page.adr) md = dropUnpublished(md, page.src);
+  const body = rewriteLinks(md, page.src).trim();
   const source = blob(page.src);
   const edit = `https://github.com/${REPO}/edit/main/${page.edit ?? page.src}`;
   const banner =

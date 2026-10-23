@@ -211,6 +211,31 @@ the same JSON as the GitHub releases API. The mirror is not trusted: it
 can withhold releases, but it cannot forge one, because the signature is
 checked against the key in the binary.
 
+## Upgrading to 0.4.6
+
+`wats upgrade` (or `brew upgrade wats`), then restart the node. A fix
+release: no store migration, no format change and no network change, so
+0.4.5 and 0.4.6 nodes work together. Notes:
+[0.4.6 release](https://github.com/wearetheswarm/wats/releases/tag/v0.4.6).
+It is not a security release.
+
+What changes:
+
+- **OpenCode at `inherit` needs one guardrail, as Mistral Vibe does:**
+  `agent.review = true` or an `agent.allow` list. 0.4.4 and 0.4.5 needed
+  both, so a configuration they refused, with only one of them, now
+  starts. With neither, it is still refused
+  ([With OpenCode](/docs/agents/runner/#with-opencode)).
+- **History no longer shows `full` too early.** A neighbor that stopped
+  partway through a catch-up could leave the node's history line at
+  `full` with part of a span missing. That span now shows as
+  `unconfirmed since …` until a neighbor serves it to the end.
+
+**Rolling back to 0.4.5** needs nothing undone, with one exception: an
+OpenCode agent at `inherit` with only one of the two guardrails is
+refused again by 0.4.5. Set the other one, or another access level,
+first.
+
 ## Upgrading to 0.4.5
 
 `wats upgrade` (or `brew upgrade wats`), then restart the node. No store
