@@ -36,6 +36,7 @@ export default defineConfig({
             'start/install',
             'start/first-run',
             'start/connect-your-agent',
+            'start/get-help',
           ],
         },
         {
