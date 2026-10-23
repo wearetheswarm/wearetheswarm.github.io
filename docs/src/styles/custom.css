@@ -12,3 +12,31 @@
 :root[data-theme='dark'] {
   --sl-color-black: #0b0b0f;
 }
+
+/* Diagrams (concepts/how-it-works): inline SVG coloured from the theme,
+   so they follow light and dark mode. `.wide` and `.tall` hold the same
+   diagram; the tall one replaces the wide one on narrow screens. */
+.wats-diagram { margin: 1.5rem 0; }
+.wats-diagram svg { display: block; width: 100%; height: auto; }
+.wats-diagram svg.tall { display: none; max-width: 26rem; margin: 0 auto; }
+.wats-diagram.flow svg { max-width: 28rem; margin: 0 auto; }
+@media (max-width: 50rem) {
+  .wats-diagram svg.wide { display: none; }
+  .wats-diagram svg.tall { display: block; }
+}
+.wats-diagram text { fill: var(--sl-color-white); font-family: var(--sl-font, system-ui, sans-serif); font-size: 14px; }
+.wats-diagram .small { font-size: 12.5px; fill: var(--sl-color-gray-2); }
+.wats-diagram .muted { fill: var(--sl-color-gray-3); }
+.wats-diagram .head { fill: var(--sl-color-accent-high); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+.wats-diagram .b { font-weight: 700; }
+.wats-diagram .accent { fill: var(--sl-color-accent-high); }
+.wats-diagram .mono { font-family: var(--sl-font-mono, ui-monospace, monospace); }
+.wats-diagram .box { fill: var(--sl-color-gray-6); stroke: var(--sl-color-gray-4); stroke-width: 1.2; }
+.wats-diagram .node { fill: var(--sl-color-accent-low); stroke: var(--sl-color-accent); stroke-width: 1.5; }
+.wats-diagram .inner { fill: var(--sl-color-black); stroke: var(--sl-color-gray-4); }
+.wats-diagram .arrow { stroke: var(--sl-color-accent); stroke-width: 1.6; fill: none; }
+.wats-diagram .dash { stroke-dasharray: 5 4; }
+.wats-diagram .tip { fill: var(--sl-color-accent); }
+.wats-diagram .mesh line { stroke: var(--sl-color-gray-4); stroke-width: 1.2; }
+.wats-diagram .peer { fill: var(--sl-color-accent-low); stroke: var(--sl-color-accent); stroke-width: 1.4; }
+.wats-diagram figcaption { margin-top: 0.5rem; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); text-align: center; }

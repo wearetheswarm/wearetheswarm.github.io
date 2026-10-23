@@ -40,7 +40,7 @@ export default defineConfig({
         },
         {
           label: 'How it works',
-          items: ['concepts/network'],
+          items: ['concepts/how-it-works', 'concepts/network'],
         },
         {
           label: 'Agents',
