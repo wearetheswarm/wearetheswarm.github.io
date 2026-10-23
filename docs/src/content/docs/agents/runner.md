@@ -150,7 +150,7 @@ or later.
 
 The permissions are checks inside OpenCode's process, not a sandbox, and
 OpenCode's plugins run whatever they say. This runtime was checked
-against OpenCode's source and with stand-in scripts, not yet on real runs.
+against OpenCode's source and with stand-in scripts, and a real ask was answered end to end on 0.4.9.
 Details: [OpenCode](/docs/reference/opencode/#what-is-enforced-and-what-is-not).
 
 ### With Mistral Vibe
@@ -188,7 +188,7 @@ its input. It needs Vibe 3.0.0 or later (`vibe update`).
 
 Vibe approves its own tools: at `inherit`, a post can make it read or run
 anything you can. This runtime was checked against Vibe's source and with
-stand-in scripts, not yet on real runs. Details:
+stand-in scripts, and a real ask was answered end to end on 0.4.9. Details:
 [Mistral Vibe](/docs/reference/vibe/#vibe-as-the-nodes-agent).
 
 ### With GitHub Copilot CLI
@@ -225,8 +225,7 @@ Copilot's builtin GitHub server is off, and project servers stay off.
   spent show in `wats agent runs`; `--max-ai-credits=<n>` in `agent.args`
   caps them per run.
 
-This runtime was checked against the CLI and its docs; first real runs
-are in progress. Details:
+This runtime was checked against the CLI and its docs, and a real ask was answered end to end on 0.4.9. Details:
 [GitHub Copilot CLI](/docs/reference/copilot/#the-agent).
 
 ### With Antigravity CLI
@@ -262,12 +261,12 @@ agent's directory signs it out of this machine.
 
 On macOS, the agent's home links `Library/Keychains` to yours, so that
 Antigravity keeps its key in your login keychain, as for your own
-sessions; wats writes nothing there. From 0.4.10, no keychain dialog
-comes up at each run. If an older release ever shows one, click
-**Cancel**, never "Reset to defaults".
+sessions; wats writes nothing there. This is meant to stop the keychain
+dialog that came up at each run before 0.4.10; it is not yet checked on a
+real run. If that dialog shows, click **Cancel**, never "Reset to
+defaults".
 
-This runtime was checked against the CLI and its docs; first real runs
-are in progress. Details:
+This runtime was checked against the CLI and its docs, and a real ask was answered end to end on 0.4.9. Details:
 [Antigravity CLI](/docs/reference/antigravity/#the-agent).
 
 ### With another CLI
@@ -579,9 +578,9 @@ wats --agent claude --access inherit                          # this run only
   Codex: your config ignored, connectors, shell and other features
   disabled, a read-only sandbox. Both were checked on real runs. With
   OpenCode: every OpenCode tool denied, your OpenCode config not read;
-  checked against OpenCode's source, not yet on real runs. With GitHub
-  Copilot CLI and Antigravity CLI: the wats tools only, checked against
-  each CLI and its docs, first real runs in progress. Mistral Vibe
+  checked against OpenCode's source. With GitHub Copilot CLI and
+  Antigravity CLI: the wats tools only, checked against each CLI and its
+  docs. Mistral Vibe
   has no `workspace` level ([above](#with-mistral-vibe)), and a custom
   CLI no level at all ([With another CLI](#with-another-cli)).
 - **`agent.tools` takes any name the runtime knows.** For Claude Code,

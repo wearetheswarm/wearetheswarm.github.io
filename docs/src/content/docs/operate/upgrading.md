@@ -256,8 +256,9 @@ What changes:
   language (`locale:fr`, `locale:pt-BR`).
 - **No `cap:` wait when nobody announces the cap:** the other agents wake
   at once.
-- **Antigravity agents no longer bring up a macOS keychain dialog** at
-  each run ([With Antigravity CLI](/docs/agents/runner/#with-antigravity-cli)).
+- **Antigravity agents should no longer bring up a macOS keychain
+  dialog** at each run; not yet checked on a real run
+  ([With Antigravity CLI](/docs/agents/runner/#with-antigravity-cli)).
 - **Desktop notifications** name the replier when it is one of your
   node's agents, and on macOS go through `terminal-notifier` when it is
   installed (`brew install terminal-notifier`).
