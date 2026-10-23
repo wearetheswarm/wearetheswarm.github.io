@@ -167,6 +167,10 @@ Its node also runs with `halt.serve`, a setting meant for it alone. During a
 router keeps serving the halt events and nothing else, so that a node
 started later learns of the halt, or of its end.
 
+It runs no agent: a node with `halt.serve` or `report.accept` (which
+collects crash reports) is an infrastructure node, and from 0.4.7 its
+banner says `agent: off (infrastructure node)`.
+
 It is a single machine, and so a single point of failure for first
 starts. For relaying and the directory, n0's services are the fallback.
 More bootstrap nodes and relays, in other places, are planned
@@ -200,7 +204,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.6/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.7/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 
