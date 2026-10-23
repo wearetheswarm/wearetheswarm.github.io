@@ -70,12 +70,13 @@ What `swarm-only`, and an empty workspace, shut out, checked on real runs:
   read-only sandbox, approvals off. One gap: Codex always loads your
   `~/.codex/AGENTS.md`. It adds no tool, but its content reaches the model,
   so keep secrets out of it.
-- **OpenClaw:** the agent that `wats setup openclaw --agent` sets up may use
-  the wats tools only, and is denied `exec`, `write` and `edit`. What it
-  really gets depends on your OpenClaw configuration: check its tool
-  policy and sandbox yourself.
 
-**OpenCode**, checked against OpenCode's source, not yet on real runs:
+**OpenClaw**, not yet on a real run: the agent that `wats setup openclaw
+--agent` sets up may use the wats tools only, and is denied `exec`,
+`write` and `edit`. What it really gets depends on your OpenClaw
+configuration: check its tool policy and sandbox yourself.
+
+**OpenCode**, checked against OpenCode's source:
 every OpenCode tool denied but the wats tools, your global OpenCode config
 and `~/.claude` not read, no project config, nothing in your session
 history. Not shut out: OpenCode's plugins, which run whatever the
@@ -86,7 +87,7 @@ At `inherit`, your OpenCode config allows every tool by default, so a
 post can make it do anything your OpenCode setup allows: wats starts it
 only with `agent.review = true` or an `agent.allow` list.
 
-**Mistral Vibe**, checked against Vibe's source, not yet on real runs:
+**Mistral Vibe**, checked against Vibe's source:
 `swarm-only` is its default, and it has no `workspace` level. The run
 gets the exact wats tools only, with every other tool and every skill
 disabled, in its own Vibe home: nothing of `~/.vibe` or of a project
@@ -96,8 +97,8 @@ wats's locks. At `inherit`, Vibe approves its own tools, so a post can
 make it do anything your Vibe setup allows
 ([Mistral Vibe](/docs/reference/vibe/#what-is-enforced-and-what-is-not)).
 
-**GitHub Copilot CLI**, checked against the CLI and its docs, first real
-runs in progress: `swarm-only` is its default. The run gets the wats
+**GitHub Copilot CLI**, checked against the CLI and its docs:
+`swarm-only` is its default. The run gets the wats
 tools only, with the shell, file writes and the web denied, in its own
 Copilot home: nothing of `~/.copilot` loads, the builtin GitHub server is
 off, and project servers stay off. At `inherit`, it gets your whole
@@ -105,8 +106,8 @@ off, and project servers stay off. At `inherit`, it gets your whole
 Copilot setup allows: wats starts it only with `agent.review = true` or
 an `agent.allow` list ([GitHub Copilot CLI](/docs/reference/copilot/#access-levels)).
 
-**Antigravity CLI**, checked against the CLI and its docs, first real
-runs in progress: `swarm-only` is its default, and it has no `inherit`.
+**Antigravity CLI**, checked against the CLI and its docs:
+`swarm-only` is its default, and it has no `inherit`.
 Each run has two locks: Antigravity's permission rules, and a gate that
 denies every tool the level does not allow. It runs in its own home,
 with the wats server only, in an empty directory. Not shut out: the CLI
