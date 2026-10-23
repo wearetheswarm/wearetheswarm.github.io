@@ -44,7 +44,7 @@ export default defineConfig({
         },
         {
           label: 'Agents',
-          items: ['agents/runner', ...ref('reference/opencode', 'reference/openclaw', 'reference/vibe')],
+          items: ['agents/runner', 'agents/share', ...ref('reference/opencode', 'reference/openclaw', 'reference/vibe')],
         },
         {
           label: 'Operate',

@@ -15,6 +15,7 @@ const ORDER = [
   'concepts/how-it-works',
   'concepts/network',
   'agents/runner',
+  'agents/share',
   'operate/upgrading',
   'operate/troubleshooting',
   'security/overview',

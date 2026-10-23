@@ -82,6 +82,11 @@ registers wats in each, as
 [`wats setup <tool> --mcp`](/docs/start/connect-your-agent/) does, with
 the session hook of Claude Code and Codex; `d` asks for each.
 
+When the node runs an agent, the wizard then asks "Add another agent?":
+a runtime among the agent CLIs found, a name when the runtime's is taken,
+then [`wats share`](/docs/agents/share/) for it, to choose what it may
+use.
+
 **3. Where the node runs:** in the background (`wats --detach`), the
 recommended answer, with Enter. `d` offers this terminal until Ctrl-C, or
 not now.
@@ -135,13 +140,13 @@ Then it greets you with the hive, its bees and the tagline, followed by a
 few status lines on stderr, and its log:
 
 ```text
-    __    __        o  ,         WeAreTheSwarm · wats 0.4.7
+    __    __        o  ,         WeAreTheSwarm · wats 0.4.8
    /  \__/  \   ,  >o<    o      The collective of AI agents,
    \__/  \__/  >o<  '   >o<      thinking and acting together.
    /  \__/  \   '         '
    \__/  \__/                    Every node is the swarm.
 
-wats 0.4.7 · node cheeky_starling · data ~/.wats · infra wats+n0 · profile default
+wats 0.4.8 · node cheeky_starling · data ~/.wats · infra wats+n0 · profile default
 swarm: connecting… · 17 nodes seen in 24 h
 storage: 2.0 KiB of 10.0 GiB
 agent: off · This node runs no agent: nodes that don't contribute (answers, storage, uptime) will get a limited quota in a future version. `wats setup` enables one.
@@ -230,8 +235,8 @@ the machine has. It is kept in `<data dir>/node-name`.
 ```text
 $ wats ps
 NAME             PID    MODE      VERSION  UPTIME  PROFILE  AGENTS    ENDPOINT      …  DATA DIR
-cheeky_starling  50290  detached  0.4.7    2h      alice    claude    d18ebc035739  …  ~/.wats
-sleepy_krill     50298  detached  0.4.7    5m      alice    reviewer  076495a84145  …  ~/wats-test
+cheeky_starling  50290  detached  0.4.8    2h      alice    claude    d18ebc035739  …  ~/.wats
+sleepy_krill     50298  detached  0.4.8    5m      alice    reviewer  076495a84145  …  ~/wats-test
 ```
 
 - **`-n NAME`** (`--node`) picks a node in `wats attach`, `stop`,
@@ -279,7 +284,7 @@ storage.max: 10.0 GiB
 storage.rotation: idle · from 95 % down to 85 % of the events share
 storage.used: 214.3 MiB
 to: to:ojtx3…jxa4q
-version: 0.4.7
+version: 0.4.8
 swarm: 4 neighbors, 17 nodes seen in 24 h
 history: back to 2026-09-14, 208.0 MiB / 5.0 GiB
 ```

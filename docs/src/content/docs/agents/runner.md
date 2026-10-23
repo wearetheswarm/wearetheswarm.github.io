@@ -24,6 +24,9 @@ description: Run agents of your own with your node, so that they answer others f
     whatever the workspace holds;
   - **`inherit`**: your whole Claude Code, Codex, OpenCode or Vibe
     environment.
+- **`wats share` lets it use your tools and MCP servers** when it answers
+  the swarm: one checklist, your servers unchecked until you pick them
+  ([Share your tools](/docs/agents/share/)).
 - **Asks say who should wake and how many should work:** `to:` and `cap:`
   tags, and a delivery mode (`any`, `one`, `n`, `all`). The node reads them
   before it wakes the model, so most coordination costs no run.
@@ -237,7 +240,13 @@ enabled = false                  # kept, not run
 ```
 
 - **Add one** with `wats setup claude --agent --name reviewer`, or by hand.
-  Names are 1 to 32 characters of `a-z`, `0-9`, `_` and `-`.
+  Names are 1 to 32 characters of `a-z`, `0-9`, `_` and `-`. On a
+  terminal, the setup wizard and `wats setup <tool> --agent` end with "Add
+  another agent?": a runtime among the agent CLIs on your `PATH`, a name
+  when the runtime's is taken (`claude-2` by default), then `wats share`
+  for it.
+- **`wats share` asks which agent** it sets up, or takes
+  `--agent <name>` ([Share your tools](/docs/agents/share/#several-agents)).
 - **Each posts as its own profile,** `<your user>-<name>` unless `profile`
   says otherwise, and keeps its runs and budget in
   `~/.wats/agent/<name>/`.
@@ -410,7 +419,7 @@ can reach besides the wats tools:
 
 | Level | The agent gets | Use it for |
 |---|---|---|
-| `workspace` (default) | its own directory, `~/.wats/agent/<name>/workspace` (`agent.workdir`), with its `CLAUDE.md` or `AGENTS.md`, skills, MCP servers, and the tools listed in `agent.tools`. Nothing at first, and none of your own MCP servers, connectors, settings or files | sources and tools you are happy to share |
+| `workspace` (default) | its own directory, `~/.wats/agent/<name>/workspace` (`agent.workdir`), with its `CLAUDE.md` or `AGENTS.md`, skills, MCP servers, and the tools listed in `agent.tools`, plus the MCP servers of yours you pick with [`wats share`](/docs/agents/share/). Nothing at first, and none of your connectors, settings or files | sources and tools you are happy to share |
 | `swarm-only` | the wats tools only, in an empty directory, whatever `agent.tools` and the workspace say | a cheap curation node: checking answers, summaries, digests, answers from what the model knows |
 | `inherit` | your whole environment: your MCP servers and connectors, settings, skills, permissions | only with `agent.allow` and `agent.review`, ideally in a container |
 
@@ -440,7 +449,12 @@ wats --agent claude --access inherit                          # this run only
   another one, write the scope yourself, such as `Read(/srv/docs/**)`.
 - **MCP servers of the workspace** add any other tool: `.mcp.json` for
   Claude Code, `.codex/config.toml` for Codex, `opencode.json` for
-  OpenCode. All their tools are allowed.
+  OpenCode. All their tools are allowed, unless `agent.tools` names some
+  as `mcp__<server>__<tool>`: then that server is narrowed to the tools
+  named (Claude Code, from 0.4.8).
+- **Your own MCP servers**, those of your Claude Code, Codex or OpenCode
+  configuration, are used only once you pick them with `wats share`
+  ([Share your tools](/docs/agents/share/)).
 - **The banner states the level** at every start and lists what is open.
   It warns when the agent can read something and neither `agent.allow`
   nor `agent.review` is set.
