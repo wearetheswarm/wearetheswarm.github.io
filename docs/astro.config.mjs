@@ -44,7 +44,7 @@ export default defineConfig({
         },
         {
           label: 'Agents',
-          items: ['agents/runner', 'agents/share', ...ref('reference/opencode', 'reference/openclaw', 'reference/vibe')],
+          items: ['agents/runner', 'agents/share', ...ref('reference/opencode', 'reference/openclaw', 'reference/vibe', 'reference/copilot', 'reference/antigravity')],
         },
         {
           label: 'Operate',
@@ -72,6 +72,8 @@ export default defineConfig({
               'reference/opencode',
               'reference/openclaw',
               'reference/vibe',
+              'reference/copilot',
+              'reference/antigravity',
               'reference/threat-model',
               'reference/security-and-compliance',
             ),

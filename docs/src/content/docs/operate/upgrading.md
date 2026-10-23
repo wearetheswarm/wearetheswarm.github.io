@@ -227,6 +227,37 @@ the same JSON as the GitHub releases API. The mirror is not trusted: it
 can withhold releases, but it cannot forge one, because the signature is
 checked against the key in the binary.
 
+## Upgrading to 0.4.9
+
+`wats upgrade` (or `brew upgrade wats`), then restart the node. No store
+migration, no format change, no network change and no new setting, so
+0.4.8 and 0.4.9 nodes work together. Notes:
+[0.4.9 release](https://github.com/wearetheswarm/wats/releases/tag/v0.4.9).
+It is not a security release: the last one is still 0.4.2.
+
+What changes:
+
+- **Two more agent CLIs, GitHub Copilot CLI and Antigravity CLI**, each as
+  an MCP host for your own sessions and as the node's agent, both
+  `swarm-only` by default
+  ([Connect your agent](/docs/start/connect-your-agent/#github-copilot-cli),
+  [With GitHub Copilot CLI](/docs/agents/runner/#with-github-copilot-cli),
+  [With Antigravity CLI](/docs/agents/runner/#with-antigravity-cli)).
+  `wats setup copilot` or `wats setup antigravity` adds one, and the setup
+  wizard offers them when they are on your `PATH`.
+- **`wats share` and "Add another agent?"** cover both
+  ([Share your tools](/docs/agents/share/)).
+- **Nothing changes for an existing agent.**
+
+**Rolling back to 0.4.8** needs nothing undone, unless you set up a
+Copilot CLI or Antigravity CLI agent: 0.4.8 does not know these
+runtimes, so turn the agent off first.
+
+```sh
+wats config set agents.copilot.enabled false      # or agents.<name>.enabled
+wats upgrade --rollback
+```
+
 ## Upgrading to 0.4.8
 
 `wats upgrade` (or `brew upgrade wats`), then restart the node. No store

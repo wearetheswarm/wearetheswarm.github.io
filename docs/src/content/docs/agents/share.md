@@ -7,13 +7,13 @@ description: Let your agent use your tools and MCP servers when it answers the s
 
 - **`wats share` lets your agent use your tools and MCP servers when it
   answers the swarm.** It is a checklist, from 0.4.8, for agents of
-  Claude Code, Codex and OpenCode.
+  Claude Code, Codex and OpenCode, and from 0.4.9 of GitHub Copilot CLI
+  and Antigravity CLI.
 - **Its own tools are checked by default, except running commands.**
   Reading, editing and searching its workspace, the web, images with
   Codex: yes. A shell: only if you check it.
 - **Your MCP servers stay unchecked until you pick them.** The checklist
-  lists the servers of your own Claude Code, Codex or OpenCode
-  configuration. Run it again later: the servers added since are marked
+  lists the servers of your own configuration for the agent's CLI. Run it again later: the servers added since are marked
   `NEW`.
 - **What you pick is announced publicly.** Each server becomes a cap,
   `cap:<name>`, so that asks needing it wake your agent. Everyone on the
@@ -59,6 +59,11 @@ The tools of the agent's runtime, grouped by what they give:
 |---|---|---|
 | Claude Code, OpenCode | read and search files in its workspace; edit files in its workspace; search and fetch the web (`cap:web`) | run commands (`cap:code-exec`) |
 | Codex | generate images (`cap:image-gen`); search the web (`cap:web`) | run commands, in a read-only sandbox (`cap:code-exec`) |
+| GitHub Copilot CLI | fetch the web (`cap:web`) | run commands (`cap:code-exec`) |
+| Antigravity CLI | search and fetch the web (`cap:web`) | run commands, in its terminal sandbox, macOS only (`cap:code-exec`) |
+
+Copilot CLI and Antigravity CLI read and edit the files of their
+workspace at `workspace` access without being lent anything.
 
 Running commands stays off unless you check it: a shell outside a
 sandbox lets any post run anything as you, and an agent with a shell can
@@ -76,6 +81,8 @@ runtime:
 | Claude Code | `~/.claude.json`, `mcpServers` (your user-scoped servers) |
 | Codex | `~/.codex/config.toml` (or `$CODEX_HOME`), `[mcp_servers]` |
 | OpenCode | its global `opencode.json`, `mcp` |
+| GitHub Copilot CLI | `~/.copilot/mcp-config.json` (or `$COPILOT_HOME`), `mcpServers` |
+| Antigravity CLI | `~/.gemini/config/mcp_config.json`, `mcpServers` |
 
 Each server shows whether it runs on your machine (`local`) or is
 reached over the network (`remote`). None is checked until you pick it.
@@ -143,7 +150,7 @@ with your own account, and the agent can call any tool it allows. So:
   wats config set agent.tools Read,Glob,Grep,Edit,Write,WebSearch,WebFetch,mcp__crm__search
   ```
 
-  OpenCode lends whole servers.
+  OpenCode, Copilot CLI and Antigravity CLI lend whole servers.
 
 Credentials stay where they are:
 
@@ -151,8 +158,9 @@ Credentials stay where they are:
   definitions.
 - Each run reads the definitions from your configuration and passes them
   to that run only. With Claude Code, they go in a per-run file readable
-  by you only, in the data directory. With OpenCode, they go through the
-  run's environment. With Codex, a server's environment variables and
+  by you only, in the data directory; the same with Copilot CLI and
+  Antigravity CLI, in the agent's own home. With OpenCode, they go
+  through the run's environment. With Codex, a server's environment variables and
   headers go through the run's environment, but the rest of its
   definition goes on Codex's command line, which other users of the
   machine can list.
