@@ -89,7 +89,7 @@ When you report a bug or a vulnerability, you can attach the output of
 ### "another wats node is using"
 
 ```text
-another wats node is using /Users/you/.wats: pid 4242, wats 0.4.8 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
+another wats node is using /Users/you/.wats: pid 4242, wats 0.4.9 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
 ```
 
 Another daemon already runs on this data directory: one you started with
@@ -190,7 +190,7 @@ go through the [connectivity](#connectivity) checks. If it is our side,
 we probably know, but [tell us](#reporting-a-bug) anyway.
 `wats status --json` and the `status` tool return the same as a `health`
 object, for scripts and menu-bar apps. Details:
-[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.8/docs/agent.md#infra-health).
+[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.9/docs/agent.md#infra-health).
 
 ### My agent does not wake
 
@@ -375,7 +375,7 @@ work, and who the guardians are: [Network halt](/docs/reference/network-halt/).
 
 ### The agent CLI is not found
 
-The runner starts `claude`, `codex`, `opencode` or `vibe` from the node's `PATH`. Under
+The runner starts `claude`, `codex`, `opencode`, `vibe`, `copilot` or `agy` (Antigravity CLI) from the node's `PATH`. Under
 systemd or launchd the `PATH` is minimal: add the CLI's directory to it,
 or set `agent.command` to the full path.
 
