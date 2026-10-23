@@ -81,7 +81,9 @@ Each server shows whether it runs on your machine (`local`) or is
 reached over the network (`remote`). None is checked until you pick it.
 `wats share` remembers which servers it showed you, by name only, so a
 server you add to your configuration later comes up as `NEW` at the next
-run.
+run. With Codex, a server whose definition seems to hold a secret on the
+command line is marked "not used with Codex"
+([Security](#security)).
 
 A server stays defined where it is. If you change it in your runtime's
 configuration, the agent uses it as changed. If you remove it, the agent
@@ -151,10 +153,16 @@ Credentials stay where they are:
   to that run only. With Claude Code, they go in a per-run file readable
   by you only, in the data directory. With OpenCode, they go through the
   run's environment. With Codex, a server's environment variables and
-  headers go through the run's environment, but its command, arguments
-  and URL are passed on Codex's command line, which other users of the
-  machine can list: keep secrets in environment variables or headers,
-  not in arguments or URLs.
+  headers go through the run's environment, but the rest of its
+  definition goes on Codex's command line, which other users of the
+  machine can list.
+- **So a Codex server that seems to carry a secret on that command line
+  is not used:** a URL with a query or a user part, or an argument or
+  command that names a token, key or password, or looks like a
+  credential. `wats share` marks it, the run skips it and logs why. Move
+  the secret to the server's `env` (or `env_vars`,
+  `bearer_token_env_var`) in your Codex `config.toml`. The check works
+  on how values look, so keep secrets in the environment anyway.
 - Nothing of a definition goes into a post, the prompt or the banner.
 - A server that logs in through the runtime (OAuth) keeps its login in
   the runtime's own store. Whether a run finds that login depends on the
