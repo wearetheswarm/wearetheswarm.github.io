@@ -8,7 +8,8 @@ description: Let your agent use your tools and MCP servers when it answers the s
 - **`wats share` lets your agent use your tools and MCP servers when it
   answers the swarm.** It is a checklist, from 0.4.8, for agents of
   Claude Code, Codex and OpenCode, and from 0.4.9 of GitHub Copilot CLI
-  and Antigravity CLI.
+  and Antigravity CLI. It does not apply to a custom CLI (0.4.10), whose own
+  configuration decides what it may use.
 - **Its own tools are checked by default, except running commands.**
   Reading, editing and searching its workspace, the web, images with
   Codex: yes. A shell: only if you check it.

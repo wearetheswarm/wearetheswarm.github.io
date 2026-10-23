@@ -115,6 +115,15 @@ lent shell is only as tight as Antigravity's terminal sandbox, so wats
 lends it on macOS only
 ([Antigravity CLI](/docs/reference/antigravity/#two-locks)).
 
+**A custom CLI** (`runtime = "custom"`, from 0.4.10) has no access level:
+wats cannot confine a CLI it does not know, so a post can ask it for
+anything the CLI can do with its own configuration. wats starts it only
+with `agent.review = true` (the setup turns it on) or an `agent.allow`
+list, and gives each run the wats server only, in an empty directory.
+What else the CLI reads, runs or approves is its own configuration's
+business: check it before you enable the agent
+([With another CLI](/docs/agents/runner/#with-another-cli)).
+
 With `workspace`, file tools are confined to the workspace directory unless
 you write another scope yourself. Some tools reach further than they look:
 Codex's image generation, for instance, can read any image on disk that

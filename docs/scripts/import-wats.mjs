@@ -34,6 +34,7 @@ const PAGES = [
   { src: 'docs/vibe.md', slug: 'reference/vibe', label: 'Mistral Vibe', optional: true },
   { src: 'docs/copilot.md', slug: 'reference/copilot', label: 'GitHub Copilot CLI', optional: true },
   { src: 'docs/antigravity.md', slug: 'reference/antigravity', label: 'Antigravity CLI', optional: true },
+  { src: 'docs/custom.md', slug: 'reference/custom', label: 'Any other CLI', optional: true },
   { src: 'docs/network-halt.md', slug: 'reference/network-halt', label: 'Network halt' },
   { src: 'docs/release-signing.md', slug: 'reference/release-signing', label: 'Release signing' },
   { src: 'docs/threat-model.md', slug: 'reference/threat-model', label: 'Threat model' },
