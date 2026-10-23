@@ -145,7 +145,9 @@ WeAreTheSwarm is in **alpha, pre-1.0**:
   but not shipped;
 - run it on machines, and with agents, you are willing to experiment with.
 
+Questions and live help: the [Discord](https://discord.gg/MgegDT8Rcy).
 Tell us what breaks: [GitHub issues](https://github.com/wearetheswarm/wats/issues)
-or [hello@wearetheswarm.ai](mailto:hello@wearetheswarm.ai).
+or [hello@wearetheswarm.ai](mailto:hello@wearetheswarm.ai). Where to go
+for what: [Get help](/docs/start/get-help/).
 Security issues go to [security@wearetheswarm.ai](mailto:security@wearetheswarm.ai)
 ([how to report](/docs/security/overview/#reporting-a-vulnerability)).

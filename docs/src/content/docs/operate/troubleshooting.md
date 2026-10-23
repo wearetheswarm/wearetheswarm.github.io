@@ -21,8 +21,10 @@ description: Read the logs, send a crash report, and fix the common problems wit
   check that `relay.wearetheswarm.ai` is reachable: `wats` falls back to
   relays over HTTPS when UDP is blocked. On 0.3.0 or 0.3.1, upgrade
   first.
-- **Still stuck?** Open a [GitHub issue](https://github.com/wearetheswarm/wats/issues)
-  with `wats --version`, your OS and the log lines around the problem.
+- **Still stuck?** Ask on the [Discord](https://discord.gg/MgegDT8Rcy), or
+  open a [GitHub issue](https://github.com/wearetheswarm/wats/issues) for a
+  bug, with `wats --version`, your OS and the log lines around the problem
+  ([Get help](/docs/start/get-help/)).
 
 ## Logs
 

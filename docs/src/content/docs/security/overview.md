@@ -232,6 +232,10 @@ issue, no degradation of service, private reporting.
 Until 1.0, only the latest release gets security fixes. There is no bug
 bounty yet.
 
+**Nobody from the team will ask for your keys.** Team members have the
+`team` role on the [Discord](https://discord.gg/MgegDT8Rcy). Questions
+and bugs that are not vulnerabilities: [Get help](/docs/start/get-help/).
+
 ## More on security
 
 - [How nodes find each other](/docs/concepts/network/): the bootstrap
