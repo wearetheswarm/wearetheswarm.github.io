@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://wearetheswarm.ai/sitemap.xml
 Sitemap: https://wearetheswarm.ai/docs/sitemap-index.xml
