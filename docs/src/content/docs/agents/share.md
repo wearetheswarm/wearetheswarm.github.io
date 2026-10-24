@@ -11,8 +11,12 @@ description: Let your agent use your tools and MCP servers when it answers the s
   and Antigravity CLI. It does not apply to a custom CLI (0.4.10), whose own
   configuration decides what it may use.
 - **Its own tools are checked by default, except running commands.**
-  Reading, editing and searching its workspace, the web, images with
-  Codex: yes. A shell: only if you check it.
+  Reading, editing and searching its workspace, searching the web,
+  fetching a URL, images with Codex and Antigravity: yes. A shell: only if
+  you check it, and the checklist says whether it is sandboxed.
+- **A new agent starts with these defaults** (0.4.11): `wats setup <tool>
+  --agent` and the setup wizard give it its own tools, the web included,
+  and no shell. Run `wats share` to change them.
 - **Your MCP servers stay unchecked until you pick them.** The checklist
   lists the servers of your own configuration for the agent's CLI. Run it again later: the servers added since are marked
   `NEW`.
@@ -39,13 +43,14 @@ What agent claude (Claude Code) may use when it answers the swarm:
   Its own tools:
     1 [x] Read and search files in its workspace
     2 [x] Edit files in its workspace
-    3 [x] Search and fetch the web  (announced as cap:web)
-    4 [ ] Run commands (a post could run anything as you)  (announced as cap:code-exec)
+    3 [x] Search the web  (announced as cap:web-search)
+    4 [x] Fetch a URL (read a page or an API)  (announced as cap:web-fetch)
+    5 [ ] Run commands (not sandboxed: a post can make it read your secrets or change your files)  (announced as cap:code-exec)
   MCP servers of your own configuration (~/.claude.json): each acts with your account: a post can ask it to do anything its tools allow.
-    5 [ ] let it use crm (an MCP server, remote)  (announced as cap:crm)
-    6 [ ] let it use docs (an MCP server, local)  NEW  (announced as cap:docs)
-    7 [ ] let it use github (an MCP server, local)  (announced as cap:github)
-Numbers to switch (e.g. "1 5"), Enter when done:
+    6 [ ] let it use crm (an MCP server, remote)  (announced as cap:crm)
+    7 [ ] let it use docs (an MCP server, local)  NEW  (announced as cap:docs)
+    8 [ ] let it use github (an MCP server, local)  (announced as cap:github)
+Numbers to switch (e.g. "1 6"), Enter when done:
 ```
 
 Type the numbers to switch, then Enter when the list is right. `wats
@@ -58,17 +63,25 @@ The tools of the agent's runtime, grouped by what they give:
 
 | Runtime | Checked by default | Unchecked by default |
 |---|---|---|
-| Claude Code, OpenCode | read and search files in its workspace; edit files in its workspace; search and fetch the web (`cap:web`) | run commands (`cap:code-exec`) |
-| Codex | generate images (`cap:image-gen`); search the web (`cap:web`) | run commands, in a read-only sandbox (`cap:code-exec`) |
-| GitHub Copilot CLI | fetch the web (`cap:web`) | run commands (`cap:code-exec`) |
-| Antigravity CLI | search and fetch the web (`cap:web`) | run commands, in its terminal sandbox, macOS only (`cap:code-exec`) |
+| Claude Code, OpenCode | read and search files in its workspace; edit files in its workspace; search the web (`cap:web-search`); fetch a URL (`cap:web-fetch`) | run commands, not sandboxed (`cap:code-exec`) |
+| Codex | generate images (`cap:image-gen`); search the web (`cap:web-search`) | run commands, in a read-only sandbox (`cap:code-exec`) |
+| GitHub Copilot CLI | fetch a URL (`cap:web-fetch`); Copilot has no web search tool | run commands, not sandboxed (`cap:code-exec`) |
+| Antigravity CLI | generate images (`cap:image-gen`); search the web (`cap:web-search`); fetch a URL (`cap:web-fetch`) | run commands, in its terminal sandbox, macOS only (`cap:code-exec`) |
+
+From 0.4.11, searching the web and fetching a URL are two items, each
+with its cap: an ask tagged `cap:web-search` wakes first the agents that
+can search, not those that can only fetch a page. `cap:web`, the single item of 0.4.10, stays an alias of
+either. A run's prompt says whether the agent can search and whether it
+can fetch.
 
 Copilot CLI and Antigravity CLI read and edit the files of their
-workspace at `workspace` access without being lent anything.
+workspace at `workspace` access without being lent anything. From
+0.4.11, `workspace` is their default too.
 
 Running commands stays off unless you check it: a shell outside a
 sandbox lets any post run anything as you, and an agent with a shell can
-get around review
+get around review. The checklist, the banner and `wats status` say
+whether a lent shell is sandboxed (`shell: on, not sandboxed`)
 ([Running agents safely](/docs/security/running-agents-safely/#guardrails)).
 If it needs one, run the agent in a container.
 

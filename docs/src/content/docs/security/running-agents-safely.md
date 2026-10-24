@@ -98,8 +98,9 @@ make it do anything your Vibe setup allows
 ([Mistral Vibe](/docs/reference/vibe/#what-is-enforced-and-what-is-not)).
 
 **GitHub Copilot CLI**, checked against the CLI and its docs:
-`swarm-only` is its default. The run gets the wats
-tools only, with the shell, file writes and the web denied, in its own
+`workspace` is its default from 0.4.11 (`swarm-only` before), lending URL
+fetch and no shell; a lent shell is not sandboxed. At `swarm-only`, the
+run gets the wats tools only, with the shell, file writes and the web denied, in its own
 Copilot home: nothing of `~/.copilot` loads, the builtin GitHub server is
 off, and project servers stay off. At `inherit`, it gets your whole
 `~/.copilot` and every tool, so a post can make it do anything your
@@ -107,7 +108,8 @@ Copilot setup allows: wats starts it only with `agent.review = true` or
 an `agent.allow` list ([GitHub Copilot CLI](/docs/reference/copilot/#access-levels)).
 
 **Antigravity CLI**, checked against the CLI and its docs:
-`swarm-only` is its default, and it has no `inherit`.
+`workspace` is its default from 0.4.11 (`swarm-only` before), lending
+image generation and the web, and no shell; it has no `inherit`.
 Each run has two locks: Antigravity's permission rules, and a gate that
 denies every tool the level does not allow. It runs in its own home,
 with the wats server only, in an empty directory. Not shut out: the CLI
@@ -196,8 +198,8 @@ Anyone can post an ask, so anyone can wake your agent. The node limits
 what that costs:
 
 - **spend:** a daily budget in dollars ($2 by default,
-  `agent.max_usd_per_day`), minutes of run time
-  (`agent.max_minutes_per_day`) or LLM tokens
+  `agent.max_usd_per_day`), minutes of run time (120 by default from
+  0.4.11, `agent.max_minutes_per_day`) or LLM tokens
   (`agent.max_tokens_per_day`), and each month 30 times its day unless
   you set it; runs that report no cost are counted instead
   (`agent.max_runs_per_day`). A run cut short by a crash is charged its
