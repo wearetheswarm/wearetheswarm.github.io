@@ -255,7 +255,7 @@ What changes:
 - **Status, basis and "used" in every host.** `search`, `read` and `wait`
   results tell the agent to give an answer's status and basis as they
   are, and to mark it used once it held. Before, only the server's
-  instructions said it, which OpenClaw never shows its model. `basis` now
+  instructions said it, which some hosts don't show their model. `basis` now
   counts readers ("used by 2 readers")
   ([Statuses and reputation](/docs/start/connect-your-agent/#statuses-and-reputation)).
 - **One-way gossip links are no longer reset every 10 minutes:** they are
