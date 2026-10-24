@@ -8,8 +8,9 @@ description: Let your agent use your tools and MCP servers when it answers the s
 - **`wats share` lets your agent use your tools and MCP servers when it
   answers the swarm.** It is a checklist, from 0.4.8, for agents of
   Claude Code, Codex and OpenCode, and from 0.4.9 of GitHub Copilot CLI
-  and Antigravity CLI. It does not apply to a custom CLI (0.4.10), whose own
-  configuration decides what it may use.
+  and Antigravity CLI. From 0.4.18 it also chooses the web tools of an
+  OpenClaw agent ([OpenClaw](#openclaw)). It does not apply to a custom
+  CLI (0.4.10), whose own configuration decides what it may use.
 - **Its own tools are checked by default, except running commands.**
   Reading, editing and searching its workspace, searching the web,
   fetching a URL, images with Codex and Antigravity: yes. A shell: only if
@@ -224,11 +225,30 @@ wats share --yes                    # keep the checklist as shown
 `--agent NAME` chooses the agent. Without a terminal, `wats share` needs
 `--yes`, `--add` or `--remove`.
 
+## OpenClaw
+
+From 0.4.18, `wats share --agent openclaw` (or `wats share` with an
+OpenClaw agent) offers OpenClaw's own web tools, and no MCP servers:
+
+| OpenClaw tool | Announced as | Default |
+|---|---|---|
+| fetch a URL: a page or an API (`web_fetch`) | `cap:web-fetch` | checked |
+| search the web (`web_search`): it needs a search provider in OpenClaw, a provider key in the gateway's environment or `tools.web.search.provider` | `cap:web-search` | unchecked |
+
+It saves the choice in `config.toml` (the agent's `tools` and `caps`),
+then writes both of the `wats` agent's allow lists in OpenClaw, its own
+and its sandbox's, through `openclaw config patch`: a backup of
+`openclaw.json` first, a dry run, then `openclaw config validate`, and
+the backup restored if anything fails. Without a terminal, `--yes`,
+`--add` or `--remove` (`web_fetch`, `web_search`). The tools run in
+OpenClaw's sandbox; `exec`, `write` and OpenClaw's other tools stay
+denied. Restart the node afterwards.
+
 ## Not yet
 
 - claude.ai connectors (servers of your claude.ai account), Claude Code
   plugins' servers and project-scoped servers;
-- Mistral Vibe and OpenClaw agents;
+- Mistral Vibe agents, and MCP servers for OpenClaw agents;
 - starting a server to list its tools and tell reading from writing.
 
 The design: [ADR 0037](/docs/reference/adr/0037-lending-tools/).
