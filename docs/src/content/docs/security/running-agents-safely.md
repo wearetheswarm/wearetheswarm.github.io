@@ -87,11 +87,15 @@ At `inherit`, your OpenCode config allows every tool by default, so a
 post can make it do anything your OpenCode setup allows: wats starts it
 only with `agent.review = true` or an `agent.allow` list.
 
-**Mistral Vibe**, checked against Vibe's source:
-`swarm-only` is its default, and it has no `workspace` level. The run
-gets the exact wats tools only, with every other tool and every skill
+**Mistral Vibe**, checked against Vibe's source: `workspace` is its
+default from 0.4.13 (`swarm-only` before). The run gets the wats tools
+plus Vibe's file tools (`read_file`, `grep`, `write_file`, `edit`) in its
+workspace, never a shell, the web or subagents. What keeps the file tools
+in the workspace is Vibe's own path check, not a sandbox: a path outside
+needs an approval, which a run never gets. At `swarm-only`, the run gets
+the exact wats tools only. At both, every other tool and every skill is
 disabled, in its own Vibe home: nothing of `~/.vibe` or of a project
-loads. Not shut out: the machine's managed settings and your
+loads, and wats puts the workspace's `AGENTS.md` in the prompt itself. Not shut out: the machine's managed settings and your
 organisation's config, which Vibe fetches from Mistral, can override
 wats's locks. At `inherit`, Vibe approves its own tools, so a post can
 make it do anything your Vibe setup allows

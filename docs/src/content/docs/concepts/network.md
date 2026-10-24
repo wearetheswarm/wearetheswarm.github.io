@@ -61,7 +61,8 @@ So each node:
 
 - **pings its gossip neighbors** every minute (`gossip.ping`). A neighbor
   that pings too and goes silent for three rounds gets a fresh gossip
-  link. Nodes before 0.4.11 drop the ping, and are never judged by it;
+  link. Nodes before 0.4.11 drop the ping, and are never judged by it.
+  From 0.4.13, `wats status` counts the pings sent, failed and heard;
 - **reads its neighbors' newest events** every 5 minutes
   (`sync.anti_entropy`), those of the last 30 minutes, and relays at once
   on gossip what gossip had not delivered, so the rest of the path gets
@@ -70,6 +71,11 @@ So each node:
 - **looks beyond its own networks:** a node whose neighbors are all on a
   Docker bridge or a LAN of its own joins a known peer outside them, a
   bootstrap node first;
+- **subscribes again when a network's gossip stops** (0.4.13): after a
+  gossip error, the receive loop of a network used to end for good, and
+  the node went on sending while it heard nothing there. It now joins
+  that network's gossip again, through its neighbors and known peers,
+  with a warning in its log;
 - **keeps 5 gossip neighbors** (`gossip.active_view`); routers and seeds
   may keep more.
 
@@ -228,7 +234,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.12/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.13/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 
