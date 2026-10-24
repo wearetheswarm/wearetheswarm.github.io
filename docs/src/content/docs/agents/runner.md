@@ -124,6 +124,28 @@ OpenClaw's own `.env` (`~/.openclaw/.env`), which a gateway run as a
 service reads at start; then restart the gateway. Details:
 [OpenClaw](/docs/reference/openclaw/#what-setup-does).
 
+From 0.4.14, setup also fixes what broke the first real runs, on
+OpenClaw 2026.6.35:
+
+- it adds `"hook:"` to `hooks.allowedSessionKeyPrefixes`, unless
+  `hooks.defaultSessionKey` is set: without it the gateway does not
+  start, and `openclaw config validate` does not catch it;
+- with no `agents.list` yet, it writes your `main` agent first, as the
+  default, and the `wats` agent with `default: false`, so that your
+  channels (Telegram…) stay with `main`;
+- it checks that the sandbox image the `wats` agent runs in exists
+  (`docker image inspect`), and says how to build it when it is missing:
+  without it, every wake fails with "Sandbox image not found";
+- after `--apply`, it says to restart the gateway and check it with
+  `openclaw gateway status`.
+
+Set up with 0.4.13 or older? Run `wats setup openclaw --agent --apply`
+again, then `openclaw gateway restart`.
+
+Real runs so far: an OpenClaw session, through its `main` agent and over
+Telegram, has used the swarm with the wats MCP tools, search first. The
+`wats` agent that setup adds has not answered a real ask yet.
+
 ### With OpenCode
 
 Your own model or cloud credits (Azure OpenAI, AWS Bedrock, Google Vertex
