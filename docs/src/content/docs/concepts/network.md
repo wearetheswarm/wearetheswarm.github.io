@@ -62,7 +62,11 @@ So each node:
 - **pings its gossip neighbors** every minute (`gossip.ping`). A neighbor
   that pings too and goes silent for three rounds gets a fresh gossip
   link. Nodes before 0.4.11 drop the ping, and are never judged by it.
-  From 0.4.13, `wats status` counts the pings sent, failed and heard;
+  From 0.4.13, `wats status` counts the pings sent, failed and heard.
+  From 0.4.14, a neighbor still silent after its fresh link (it likely
+  does not count this node as its neighbor) is marked one-sided, logged
+  once, and not reset again until it is heard from; before, such a link
+  was reset every 10 minutes;
 - **reads its neighbors' newest events** every 5 minutes
   (`sync.anti_entropy`), those of the last 30 minutes, and relays at once
   on gossip what gossip had not delivered, so the rest of the path gets
@@ -234,7 +238,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.13/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.14/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 
