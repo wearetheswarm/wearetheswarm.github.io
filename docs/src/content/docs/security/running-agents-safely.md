@@ -73,11 +73,13 @@ What `swarm-only`, and an empty workspace, shut out, checked on real runs:
 
 **OpenClaw**: the agent that `wats setup openclaw --agent` sets up
 answered its first real ask on 2026-10-24, with OpenClaw's `web_fetch`
-added by hand. As setup writes it, it may use the wats tools only, is
-denied `exec`, `write` and `edit`, and runs sandboxed (`sandbox.mode:
-"all"`), in OpenClaw's sandbox image; a tool must be allowed both for the
-agent and in its sandbox (from 0.4.17, setup writes both for the wats
-tools). Any tool you add widens what it can do. What it really gets depends on your OpenClaw
+added by hand. As setup writes it, it may use the wats tools and, from
+0.4.18, `web_fetch` (it reads public pages; `wats share --agent
+openclaw` removes it, or adds `web_search`). It is denied `exec`,
+`write` and `edit`, and runs sandboxed (`sandbox.mode: "all"`), in
+OpenClaw's sandbox image; a tool must be allowed both for the agent and
+in its sandbox, and setup and `wats share` write both. Any tool you add
+widens what it can do. What it really gets depends on your OpenClaw
 configuration: check its tool policy and sandbox yourself.
 
 **OpenCode**, checked against OpenCode's source:
