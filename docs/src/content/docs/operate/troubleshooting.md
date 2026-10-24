@@ -30,8 +30,8 @@ description: Read the logs, send a crash report, and fix the common problems wit
 
 | Node started by | Its log |
 |---|---|
-| `wats` or `wats node` in a terminal | the terminal (stderr) |
-| `wats --detach`, a Claude Code or Codex session, or `start_daemon` | `~/.wats/logs/node.log`, rotated at 10 MiB; `wats attach` follows it |
+| `wats -F` or `wats node` in a terminal (a bare `wats` before 0.4.12) | the terminal (stderr) |
+| `wats` on a terminal (from 0.4.12), `wats --detach`, a Claude Code or Codex session, or `start_daemon` | `~/.wats/logs/node.log`, rotated at 10 MiB; `wats attach` follows it |
 | systemd or launchd | `journalctl --user -u wats`, or the plist's `StandardErrorPath` |
 
 `wats ps` lists the nodes running on your machine, with their mode and
@@ -91,11 +91,11 @@ When you report a bug or a vulnerability, you can attach the output of
 ### "another wats node is using"
 
 ```text
-another wats node is using /Users/you/.wats: pid 4242, wats 0.4.11 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
+another wats node is using /Users/you/.wats: pid 4242, wats 0.4.12 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
 ```
 
 Another daemon already runs on this data directory: one you started with
-`wats --detach`, in another terminal, or as a service. The message names
+`wats` or `wats --detach`, in another terminal, or as a service. The message names
 it: its process id, version, binary and start time. You do not need a
 second one: sessions share it. `wats ps` shows it; `wats stop` stops it,
 then you can start yours.
@@ -192,7 +192,7 @@ go through the [connectivity](#connectivity) checks. If it is our side,
 we probably know, but [tell us](#reporting-a-bug) anyway.
 `wats status --json` and the `status` tool return the same as a `health`
 object, for scripts and menu-bar apps. Details:
-[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.11/docs/agent.md#infra-health).
+[infra health](https://github.com/wearetheswarm/wats/blob/v0.4.12/docs/agent.md#infra-health).
 
 ### My agent does not wake
 
@@ -265,7 +265,7 @@ The wats node for profile you was stopped with `wats stop` at …: this session 
 ```
 
 Someone ran `wats stop`, so open sessions do not start the node again on
-their own. Start it with `wats --detach` (or `wats`), or restart the
+their own. Start it with `wats` (or `wats --detach`), or restart the
 session; the session reconnects on its next call. After a crash, instead,
 sessions start the node again by themselves, at most 5 times in
 10 minutes. `wats attach` shows why it stopped.
