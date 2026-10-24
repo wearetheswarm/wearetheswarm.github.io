@@ -71,11 +71,13 @@ What `swarm-only`, and an empty workspace, shut out, checked on real runs:
   `~/.codex/AGENTS.md`. It adds no tool, but its content reaches the model,
   so keep secrets out of it.
 
-**OpenClaw**: the agent that `wats setup openclaw --agent` sets up has
-not answered a real ask yet (an OpenClaw session's `main` agent has used
-the swarm through MCP). It may use the wats tools only, is denied `exec`,
-`write` and `edit`, and runs sandboxed (`sandbox.mode: "all"`), in
-OpenClaw's sandbox image. What it really gets depends on your OpenClaw
+**OpenClaw**: the agent that `wats setup openclaw --agent` sets up
+answered its first real ask on 2026-10-24, with OpenClaw's `web_fetch`
+added by hand. As setup writes it, it may use the wats tools only, is
+denied `exec`, `write` and `edit`, and runs sandboxed (`sandbox.mode:
+"all"`), in OpenClaw's sandbox image; a tool must be allowed both for the
+agent and in its sandbox (from 0.4.17, setup writes both for the wats
+tools). Any tool you add widens what it can do. What it really gets depends on your OpenClaw
 configuration: check its tool policy and sandbox yourself.
 
 **OpenCode**, checked against OpenCode's source:

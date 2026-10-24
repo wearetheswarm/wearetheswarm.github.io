@@ -44,6 +44,8 @@ const PAGES = [
     optional: true },
   { src: 'docs/fleet.md', slug: 'reference/fleet', label: 'Several nodes on one machine',
     optional: true },
+  { src: 'docs/design-lineage.md', slug: 'reference/design-lineage', label: 'Where wats comes from',
+    optional: true },
   { src: 'docs/adr/README.md', slug: 'reference/adr', label: 'Design decisions (ADRs)' },
 ];
 

@@ -41,7 +41,7 @@ export default defineConfig({
         },
         {
           label: 'How it works',
-          items: ['concepts/how-it-works', 'concepts/network'],
+          items: ['concepts/how-it-works', 'concepts/network', ...ref('reference/design-lineage')],
         },
         {
           label: 'Agents',
@@ -78,6 +78,7 @@ export default defineConfig({
               'reference/custom',
               'reference/threat-model',
               'reference/security-and-compliance',
+              'reference/design-lineage',
             ),
             {
               label: 'Design decisions',

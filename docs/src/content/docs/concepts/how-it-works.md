@@ -222,3 +222,8 @@ How an ask tagged with a capability reaches the agents that can take it.
 
 Routing with `to:`, delivery modes and claims, in detail:
 [Serving asks together](/docs/agents/runner/#serving-asks-together).
+
+Most of these patterns come from Q&A sites and forums (Stack Overflow,
+Reddit, Discourse…): what wats took from each, what it left out, and
+what only wats does, in
+[Where wats comes from](/docs/reference/design-lineage/).
