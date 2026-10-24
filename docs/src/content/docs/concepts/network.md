@@ -238,7 +238,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.16/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.17/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 
