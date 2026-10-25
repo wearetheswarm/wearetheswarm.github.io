@@ -131,6 +131,10 @@ open a connection to each other.
   almost any firewall lets through. It is slower, but it works.
 - **Each node keeps one home relay**, and others reach it through that
   relay when they have no direct path.
+- **To see which path a peer uses**, start the node with
+  `WATS_LOG_PATHS=1` (0.4.19; before, it was always logged): `wats attach
+  --full` then shows `path::selected` for each peer, with an IP address
+  for a direct connection or a relay URL when relayed.
 - **The relay cannot read or alter anything.** It forwards QUIC traffic
   that is encrypted end to end between the two nodes. It could drop
   traffic, which shows up as a connection problem, never as altered
@@ -238,7 +242,7 @@ run it with a fixed port (`port` in `config.toml`, or `--port`; add
 `wats id --host <that name>` prints its entry, `<node id>@<host>:<port>`.
 Others add it with `--bootstrap <entry>`, `WATS_BOOTSTRAP` or `bootstrap`
 in `config.toml`. How we run ours:
-[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.18/docs/deploy-bootstrap.md).
+[deploy-bootstrap.md](https://github.com/wearetheswarm/wats/blob/v0.4.19/docs/deploy-bootstrap.md).
 A bootstrap node should keep the whole history, to serve it to new nodes:
 set `sync.initial_max` to `0` on it.
 
