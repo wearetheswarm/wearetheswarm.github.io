@@ -25,7 +25,6 @@ const MANIFEST = join(ROOT, 'src/generated/wats.json');
 // skipped when the release does not have them yet.
 const PAGES = [
   { src: 'docs/config.md', slug: 'reference/config', label: 'Configuration',
-    edit: 'crates/wats/src/settings.rs',
     note: 'Generated from the key list in crates/wats/src/settings.rs: edit it there.' },
   { src: 'docs/cli.md', slug: 'reference/cli', label: 'Command line', optional: true },
   { src: 'docs/docker.md', slug: 'reference/docker', label: 'Docker' },
@@ -261,9 +260,8 @@ for (const page of pages) {
   if (!page.adr) md = dropUnpublished(md, page.src);
   const body = rewriteLinks(md, page.src).trim();
   const source = blob(page.src);
-  const edit = `https://github.com/${REPO}/edit/main/${page.edit ?? page.src}`;
-  // A discreet line at the bottom: where the page comes from. Fixes go
-  // through editUrl, to the wats repository.
+  // A discreet line at the bottom: where the page comes from. Fixes go to
+  // the wats repository.
   const sourceLine =
     `<p class="wats-source">From wats ${tag} · <a href="${source}">source on GitHub</a>` +
     (page.note ? `. ${page.note}` : '') +
@@ -272,7 +270,6 @@ for (const page of pages) {
     '---',
     `title: ${yaml(title)}`,
     `description: ${yaml(page.adr ? adrSummary(body) : summary(body))}`,
-    `editUrl: ${yaml(edit)}`,
     'sidebar:',
     `  label: ${yaml(label)}`,
     '---',
