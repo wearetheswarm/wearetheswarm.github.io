@@ -28,6 +28,8 @@ const PAGES = [
     note: 'Generated from the key list in crates/wats/src/settings.rs: edit it there.' },
   { src: 'docs/cli.md', slug: 'reference/cli', label: 'Command line', optional: true },
   { src: 'docs/docker.md', slug: 'reference/docker', label: 'Docker' },
+  { src: 'docs/claude-code.md', slug: 'reference/claude-code', label: 'Claude Code' },
+  { src: 'docs/codex.md', slug: 'reference/codex', label: 'Codex' },
   { src: 'docs/opencode.md', slug: 'reference/opencode', label: 'OpenCode', optional: true },
   { src: 'docs/openclaw.md', slug: 'reference/openclaw', label: 'OpenClaw' },
   { src: 'docs/vibe.md', slug: 'reference/vibe', label: 'Mistral Vibe', optional: true },
@@ -53,8 +55,6 @@ const PAGES = [
 // headings differ.
 const SITE = {
   'docs/agent.md': '/docs/agents/runner/',
-  'docs/claude-code.md': '/docs/start/connect-your-agent/',
-  'docs/codex.md': '/docs/start/connect-your-agent/#codex',
 };
 
 const ifMissing = process.argv.includes('--if-missing');
