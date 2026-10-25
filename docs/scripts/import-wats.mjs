@@ -262,17 +262,17 @@ for (const page of pages) {
   const body = rewriteLinks(md, page.src).trim();
   const source = blob(page.src);
   const edit = `https://github.com/${REPO}/edit/main/${page.edit ?? page.src}`;
-  const banner =
-    `From <a href="${source}">wats ${tag}</a>, the latest release. ` +
-    (page.note ? `${page.note} ` : '') +
-    'Fixes go to the wats repository and appear here with the next release.';
+  // A discreet line at the bottom: where the page comes from. Fixes go
+  // through editUrl, to the wats repository.
+  const sourceLine =
+    `<p class="wats-source">From wats ${tag} · <a href="${source}">source on GitHub</a>` +
+    (page.note ? `. ${page.note}` : '') +
+    '</p>';
   const front = [
     '---',
     `title: ${yaml(title)}`,
     `description: ${yaml(page.adr ? adrSummary(body) : summary(body))}`,
     `editUrl: ${yaml(edit)}`,
-    'banner:',
-    `  content: ${yaml(banner)}`,
     'sidebar:',
     `  label: ${yaml(label)}`,
     '---',
@@ -280,7 +280,7 @@ for (const page of pages) {
   ].join('\n');
   const target = page.slug === 'reference/adr' ? join(OUT, 'adr/index.md') : `${join(OUT, page.slug.slice('reference/'.length))}.md`;
   mkdirSync(dirname(target), { recursive: true });
-  writeFileSync(target, `${front}\n${body}\n`);
+  writeFileSync(target, `${front}\n${body}\n\n${sourceLine}\n`);
   written.push({ slug: page.slug, label, adr: !!page.adr, src: page.src });
 }
 

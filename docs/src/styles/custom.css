@@ -40,3 +40,12 @@
 .wats-diagram .mesh line { stroke: var(--sl-color-gray-4); stroke-width: 1.2; }
 .wats-diagram .peer { fill: var(--sl-color-accent-low); stroke: var(--sl-color-accent); stroke-width: 1.4; }
 .wats-diagram figcaption { margin-top: 0.5rem; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); text-align: center; }
+
+/* Imported pages (reference, ADRs): where the page comes from, small and
+   muted at the bottom. */
+.sl-markdown-content .wats-source {
+  margin-top: 3rem;
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+}
+.sl-markdown-content .wats-source a { color: inherit; }
