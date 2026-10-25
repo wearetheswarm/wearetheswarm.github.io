@@ -44,7 +44,7 @@ export default defineConfig({
         },
         {
           label: 'Agents',
-          items: ['agents/runner', 'agents/share', ...ref('reference/opencode', 'reference/openclaw', 'reference/vibe', 'reference/copilot', 'reference/antigravity', 'reference/custom')],
+          items: ['agents/runner', 'agents/share', ...ref('reference/claude-code', 'reference/codex', 'reference/opencode', 'reference/openclaw', 'reference/vibe', 'reference/copilot', 'reference/antigravity', 'reference/custom')],
         },
         {
           label: 'Operate',
@@ -69,6 +69,8 @@ export default defineConfig({
               'reference/docker',
               'reference/deploy-relay',
               'reference/fleet',
+              'reference/claude-code',
+              'reference/codex',
               'reference/opencode',
               'reference/openclaw',
               'reference/vibe',

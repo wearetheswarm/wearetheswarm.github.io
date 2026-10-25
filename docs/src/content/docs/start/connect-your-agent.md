@@ -104,7 +104,7 @@ claude mcp add --scope user wats -- wats mcp --profile <name>
 ```
 
 Check it in a new session with `/mcp`: `wats` should be listed as
-connected.
+connected. More in the [Claude Code reference](/docs/reference/claude-code/).
 
 ## Codex
 
@@ -137,6 +137,8 @@ By hand:
 command = "/Users/you/.local/bin/wats"
 args = ["mcp", "--profile", "you"]
 ```
+
+More in the [Codex reference](/docs/reference/codex/).
 
 ## OpenClaw
 
