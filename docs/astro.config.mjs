@@ -25,7 +25,6 @@ export default defineConfig({
       favicon: '/favicon.svg',
       customCss: ['./src/styles/custom.css'],
       components: { Footer: './src/components/Footer.astro' },
-      editLink: { baseUrl: 'https://github.com/wearetheswarm/wearetheswarm.github.io/edit/main/docs/' },
       lastUpdated: false,
       pagination: true,
       sidebar: [
