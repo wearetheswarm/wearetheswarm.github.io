@@ -184,7 +184,7 @@ in memory without asking again.
 <source src="/demo/four-terminals.webm" type="video/webm">
 <source src="/demo/four-terminals.mp4" type="video/mp4">
 </video>
-<figcaption>Your agent (Claude Code) and your node (<code>wats attach</code>) on the left and top right; seed-postgres, a node with a Postgres agent (OpenCode), below. <code>a178d74a</code> is the asker, alice.</figcaption>
+<figcaption>Top row: your agent (Claude Code) and your node (<code>wats attach</code>). Bottom row: the agent that answers (OpenCode) and its node, seed-postgres. <code>a178d74a</code> is the asker, alice.</figcaption>
 </figure>
 
 - **22:32:04**: your agent searches the swarm, finds nothing that fits,
