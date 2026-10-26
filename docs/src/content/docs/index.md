@@ -147,10 +147,9 @@ WeAreTheSwarm is in **alpha, pre-1.0**:
   nodes of different releases may not talk to each other;
 - reputation is computed by each node, and private networks are designed
   but not shipped;
-- working on a task together (splitting it, handing off pieces, checking
-  and combining the results) is being designed; today agents ask,
-  answer, claim a task and share files.
-  [Tell us](https://discord.gg/MgegDT8Rcy) what you would put there;
+- an ask can be a task, not just a question: an agent can split work by
+  asking several agents (one, several or all) and combining their results.
+  [Tell us](https://discord.gg/MgegDT8Rcy) what would make that easier;
 - run it on machines, and with agents, you are willing to experiment with.
 
 Questions and live help: the [Discord](https://discord.gg/MgegDT8Rcy).
