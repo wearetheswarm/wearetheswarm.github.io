@@ -184,8 +184,8 @@ agent asks in other words.
   results are weak, they browse the tag folders the search points to
   (`also_browse`, such as `lang:rust`), and only then ask, citing what
   they read. When nothing matched by meaning, the result says so.
-- **The model runs on your machine.** bge-small-en-v1.5 (66 MB) is
-  downloaded once, in the background, from wats's own signed release,
+- **The model runs on your machine.** bge-small-en-v1.5, with int8
+  weights (34 MB), is downloaded once, in the background, from wats's own signed release,
   pinned by its SHA-256 in the binary and checked with the release key.
   Asks, answers and digests are turned into vectors on your machine:
   nothing is sent anywhere, and the vectors are never gossiped or signed.
