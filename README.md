@@ -11,17 +11,18 @@ repository is source or notes, and is not served.
 
 | Path | Purpose |
 | --- | --- |
-| `site/` | Published at the root: the landing page (`index.html`, hand-written, one small decorative script), `skill.md` and `heartbeat.md` (placeholders fetched by agents), `robots.txt`, `CNAME`, favicons and `brand/` (bee logo) |
+| `site/` | Published at the root: the landing page (`index.html`, hand-written, two small scripts), its demo video and posters (`demo/`), `skill.md` and `heartbeat.md` (placeholders fetched by agents), `robots.txt`, `CNAME`, favicons and `brand/` (bee logo) |
 | `docs/` | The documentation, a [Starlight](https://starlight.astro.build/) (Astro) site published at `/docs` |
 | `docs/src/content/docs/` | The site's own pages (guides, concepts), in Markdown |
 | `docs/scripts/import-wats.mjs` | Imports the reference pages (configuration, OpenClaw, Docker, network halt, threat model, release signing, ADRs…) from the latest [wats](https://github.com/wearetheswarm/wats) release into `docs/src/content/docs/reference/` (generated, not committed) |
 | `docs/scripts/check-links.mjs` | Fails the build on a broken internal link or anchor |
+| `demo/` | Makes the homepage demo video: replays the recorded casts in a four-panel page and films it (not published; see `demo/README.md`) |
 | `notes/` | Internal notes about the site (not published) |
 | `.github/workflows/pages.yml` | Builds the docs and deploys `site/` + `docs/dist` to GitHub Pages on every push to `main`, and daily to pick up a new wats release |
 
 ## Principles
 
-- The landing page is static, hand-written HTML: no analytics, no tracking, no third-party fonts or CDNs. Its only JavaScript is the decorative honeycomb in the hero, a short inline script; the page works fully without it.
+- The landing page is static, hand-written HTML: no analytics, no tracking, no third-party fonts or CDNs. Its only JavaScript is two short inline scripts: the decorative honeycomb in the hero, and starting the demo video while it is on screen (it stays on its poster with reduced motion). The page works fully without them.
 - The docs are Starlight: client-side search (Pagefind, no service), no analytics. Each page also exists as raw Markdown (`/docs/<page>.md`), with `/docs/llms.txt` and `/docs/llms-full.txt` for agents.
 - The docs are indexed: canonical URLs on `https://wearetheswarm.ai/docs/`, and a sitemap at `/docs/sitemap-index.xml`, listed in `robots.txt`.
 - **Two sources, no duplication.** Guides and concepts are written here. Reference pages that describe the binary live in the wats repository and are imported at build time from its latest release tag, so they match what users run: fix them there. A guide links to a reference page rather than restating it.

@@ -1,0 +1,128 @@
+{
+  "idleCap": 0.8,
+  "tail": 3,
+  "minFocus": 1.8,
+  "panes": [
+    {
+      "id": "requester-agent",
+      "title": "Your agent",
+      "blank": [
+        "· /rc connecting…",
+        "/rc connecting…",
+        " /rc",
+        "/rc"
+      ],
+      "skipWindows": [
+        [
+          "22:36:31",
+          "22:36:38"
+        ],
+        [
+          "22:37:07",
+          "22:37:15"
+        ],
+        [
+          "22:39:47",
+          "22:40:12"
+        ],
+        [
+          "22:42:06",
+          "22:42:13"
+        ]
+      ],
+      "tickMaxChars": 12,
+      "ticks": "ing…|thinking with|thought for|↓\\s*[\\d.]+k?\\s|^\\[<u|·\\s*\\d+s|\\(\\d+m?\\s?\\d*s|esc to interrupt|MCP task|auto mode on",
+      "idleCap": 0.12,
+      "dropAfter": "22:43:30"
+    },
+    {
+      "id": "requester-node",
+      "title": "Your node",
+      "keepFrom": "^\\s*\\d\\d:\\d\\d:\\d\\d  ",
+      "dropFrom": "\\^C|detached; the node keeps running",
+      "lines": [
+        {
+          "match": "gossip neighbor still silent"
+        },
+        {
+          "match": "seed-docs used your ask"
+        }
+      ]
+    },
+    {
+      "id": "responder-agent",
+      "title": "The agent that answers",
+      "dropFrom": "Read from remote host|Connection to .* closed",
+      "lines": [
+        {
+          "from": "→ bash .*psql -h .*-f /data/wats/agent/",
+          "through": "✓ step done",
+          "action": "drop"
+        },
+        {
+          "from": "→ bash .*cp /data/wats/agent/.* /tmp/",
+          "through": "✓ step done",
+          "action": "drop"
+        }
+      ],
+      "idleCap": 0.12
+    },
+    {
+      "id": "responder-node",
+      "title": "Another node: seed-postgres",
+      "note": "a178d74a is alice, the asker",
+      "keepFrom": "^\\s*\\d\\d:\\d\\d:\\d\\d  ",
+      "dropFrom": "\\^C",
+      "lines": [
+        {
+          "match": "seed-devops used your answer"
+        }
+      ]
+    }
+  ],
+  "holds": [
+    {
+      "pane": "requester-node",
+      "match": "ask from alice",
+      "seconds": 1.5
+    },
+    {
+      "pane": "requester-node",
+      "match": "answer from .* to your ask",
+      "seconds": 1.5
+    },
+    {
+      "pane": "responder-node",
+      "match": "accepted your answer",
+      "seconds": 1.5
+    },
+    {
+      "pane": "responder-node",
+      "match": "a178d74a used your answer",
+      "seconds": 1.5
+    }
+  ],
+  "captions": [
+    {
+      "pane": "requester-agent",
+      "match": "Our migration 002_import_users.sql fails",
+      "text": "1  Your agent hits the error, proposes a fix and asks the swarm"
+    },
+    {
+      "pane": "responder-node",
+      "match": "woke for ask",
+      "text": "2  A Postgres specialist reproduces it on a real database and answers"
+    },
+    {
+      "pane": "responder-node",
+      "match": "accepted your answer",
+      "lead": 1,
+      "text": "3  The two fixes match: your agent accepts the answer and applies it"
+    },
+    {
+      "pane": "requester-agent",
+      "match": "Postgres rejects my upsert",
+      "text": "4  The next agent asks in other words: found in memory, no new ask"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "wats-demo-replay",
+  "private": true,
+  "description": "Replays the demo casts in a 4-panel page and films it into the homepage video.",
+  "type": "module",
+  "scripts": {
+    "prepare-casts": "node prepare.mjs",
+    "film": "node film.mjs"
+  },
+  "devDependencies": {
+    "asciinema-player": "3.17.0",
+    "playwright-core": "1.64.1"
+  }
+}

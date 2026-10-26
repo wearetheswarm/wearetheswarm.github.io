@@ -1,0 +1,112 @@
+/* The site's colours (site/index.html). Sizes are CSS pixels; film.mjs films desktop at 1.5x. */
+:root{
+  --bg:#0b0b0f; --surface:#14141b; --term:#101016; --surface-2:#1d2052; --border:#2a2a35; --border-strong:#3a3a48;
+  --text:#e8e8ef; --muted:#b0b0c0; --faint:#7d7d8f; --accent:#6f7bff; --accent-text:#9fa8ff; --honey:#ffd166;
+  --green:#7ee0a1; --red:#ff6b81; --cyan:#7fd6e8;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+.stage{height:100%;display:flex;flex-direction:column;padding:14px 14px 0}
+/* Two machines, left to right, with the network between them. */
+.world{flex:1;min-height:0;display:grid;grid-template-columns:1fr 104px 1fr;gap:0}
+.machine{min-width:0;min-height:0;display:flex;flex-direction:column;border:1px solid var(--border-strong);border-radius:16px;background:var(--surface);padding:8px}
+.machine h3{margin:0 4px 8px;font:600 13px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cols{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pane{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--term);border:1px solid var(--border);border-radius:12px;overflow:hidden;opacity:.42}
+.pane header{padding:7px 12px;border-bottom:1px solid var(--border)}
+.pane .where{display:none}
+.pane h2{margin:0;font-size:16px;font-weight:650;letter-spacing:-.01em}
+.pane .note{display:block;font-size:12px;color:var(--muted)}
+.pane.active{opacity:1;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 26px -6px rgba(111,123,255,.45)}
+.pane.active h2{color:var(--accent-text)}
+
+/* Lines: the newest at the bottom, the one before it faded. */
+.lines{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:10px 12px 12px;overflow:hidden}
+.line{margin:0;font:400 17.5px/1.36 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text)}
+.line.old{opacity:.42}
+.line .ts{color:var(--faint)}
+.line.prompt{font-weight:600}
+.line.prompt .mark{color:var(--accent-text)}
+.line .mark{color:var(--faint)}
+.line.ok{color:var(--green)}
+.line.err{color:var(--red)}
+.line.ask{color:var(--cyan)}
+.line.cmd{color:var(--accent-text)}
+.cursor{display:inline-block;width:.6em;height:1.1em;vertical-align:-.15em;background:var(--accent-text);margin-left:1px}
+
+/* Memory under a node: a database glyph, lit when searched, filled honey when an answer is stored. */
+.memory{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border);font-size:13px;color:var(--faint)}
+.db{flex:none;width:22px;height:26px;fill:none;stroke:var(--faint);stroke-width:1.4}
+.db .body{fill:transparent}
+.memory .label{font-weight:600;letter-spacing:.02em}
+.memory .state{color:var(--muted)}
+.memory[data-state="searched"] .db{stroke:var(--accent-text)}
+.memory[data-state="stored"] .db .body,.memory[data-state="found"] .db .body,.db.full .body{fill:var(--honey)}
+.memory[data-state="stored"] .db,.memory[data-state="found"] .db,.db.full{stroke:var(--honey)}
+.memory[data-state="found"] .state{color:var(--honey);font-weight:600}
+.memory.lit .db{filter:drop-shadow(0 0 7px rgba(255,209,102,.8))}
+.memory.lit[data-state="searched"] .db{filter:drop-shadow(0 0 7px rgba(159,168,255,.9))}
+
+/* The network: a band between the machines, a wire with a pulse, and the copies on other nodes. */
+.band{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 6px}
+.band::before{content:"";position:absolute;top:8px;bottom:8px;left:50%;border-left:1px dashed var(--border-strong)}
+.band-label{position:absolute;top:10px;padding:2px 6px;background:var(--bg);font:600 11px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.wire{position:relative;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--border-strong),transparent)}
+.band.busy .wire{background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.pulse{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--honey);box-shadow:0 0 14px 4px rgba(255,209,102,.6);opacity:0}
+.copies{position:relative;display:flex;flex-direction:column;gap:6px;padding:6px;background:var(--bg)}
+.copies .db{width:18px;height:21px;opacity:.7}
+.copies .db.full{opacity:1;filter:drop-shadow(0 0 6px rgba(255,209,102,.7))}
+.copies-label{position:relative;max-width:96px;padding:2px 4px;background:var(--bg);font-size:11px;line-height:1.3;text-align:center;color:var(--muted);opacity:0}
+.mwire,.mchip{display:none}
+
+.caption{height:66px;margin:0;display:flex;align-items:center;justify-content:center;gap:.8rem;font-size:23px;font-weight:600;letter-spacing:-.01em}
+.caption b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--surface-2);color:var(--honey);font-size:19px}
+
+/* Mobile: one column per beat, full width, with its machine named above it, and a thin network bar. */
+.mobile .stage{padding:12px 12px 0}
+.mobile .world{display:block;position:relative;flex:none;height:390px}
+.mobile .machine{display:contents}
+.mobile .machine h3,.mobile .band{display:none}
+.mobile .cols{display:block;position:relative;height:100%}
+.mobile .pane{position:absolute;inset:0}
+.mobile .pane .where{display:block;margin-bottom:2px;font:600 11px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mobile .pane h2{font-size:20px}
+.mobile .line{font-size:17px}
+.mobile .mwire{display:block;position:relative;height:3px;margin:0 0 10px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0}
+.mobile .mwire i{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--honey);box-shadow:0 0 10px 3px rgba(255,209,102,.6)}
+.mobile .caption{flex:1;height:auto;font-size:19px;line-height:1.3;justify-content:flex-start;padding:0 4px}
+.mobile .caption b{flex:none;width:34px;height:34px;font-size:18px}
+
+/* Cards: the intro, the step titles and the end card, over the dimmed stage. */
+.dim{position:fixed;inset:0;background:var(--bg);opacity:0;pointer-events:none}
+.card{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;padding:0 40px}
+.card h1{margin:.2em 0 .1em;font-size:52px;line-height:1.05;letter-spacing:-.035em}
+.card .tagline{margin:0;font-size:26px;color:var(--text)}
+.card .teaser{margin:1.1em 0 0;font-size:21px;color:var(--muted)}
+.card .bee{width:96px;height:96px;image-rendering:pixelated}
+.card code{margin:.9em 0 .6em;padding:.55em 1em;border:1px solid var(--border-strong);border-radius:12px;background:var(--surface);font:500 22px var(--mono);color:var(--text)}
+.card code::before{content:"$ ";color:var(--honey)}
+.card .url{margin:0;font-size:22px;color:var(--accent-text);font-weight:600}
+#outro h1{font-size:46px;margin-top:.5em}
+.title{position:fixed;left:50%;top:44%;margin:0;width:max-content;max-width:84vw;display:flex;align-items:center;gap:.6em;font-size:44px;line-height:1.15;font-weight:650;letter-spacing:-.02em;opacity:0;transform-origin:center}
+.title b{flex:none;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:.4em;background:var(--surface-2);color:var(--honey);font-size:.8em}
+.mobile .card h1{font-size:36px}
+.mobile .card .tagline{font-size:20px}
+.mobile .card .teaser{font-size:17px}
+.mobile .card code{font-size:13px;white-space:nowrap;padding:.5em .7em}
+.mobile .card .url{font-size:18px}
+.mobile #outro h1{font-size:32px}
+.mobile .title{font-size:27px;max-width:88vw}
+
+/* Mobile: your node's memory, as a chip above the column. */
+.mobile .mchip{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:13px;color:var(--faint);opacity:0}
+.mobile .mchip .label{font-weight:600}
+.mobile .mchip .state{color:var(--muted)}
+.mobile .mchip[data-state="searched"] .db{stroke:var(--accent-text)}
+.mobile .mchip[data-state="stored"] .db .body,.mobile .mchip[data-state="found"] .db .body{fill:var(--honey)}
+.mobile .mchip[data-state="stored"] .db,.mobile .mchip[data-state="found"] .db{stroke:var(--honey)}
+.mobile .mchip[data-state="found"] .state{color:var(--honey);font-weight:600}
+.mobile .mchip.lit .db{filter:drop-shadow(0 0 7px rgba(255,209,102,.8))}
