@@ -106,6 +106,17 @@
   .tile:hover{border-color:var(--accent);text-decoration:none}
   .tile.any{border-style:dashed;color:var(--accent-text)}
 
+  /* Demo video (made in demo/: replay of the real casts, filmed frame by frame) */
+  figure.demo{max-width:none;margin:0 0 1.4rem}
+  figure.demo video{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:14px;border:1px solid var(--border);background:#101016}
+  .demo-frame{position:relative}
+  .demo-replay{position:absolute;right:1rem;bottom:1rem;padding:.5rem .95rem;border-radius:10px;border:1px solid var(--border-strong);background:rgba(20,20,27,.88);color:var(--text);font:600 .95rem system-ui,sans-serif;cursor:pointer}
+  .demo-replay:hover{border-color:var(--accent)}
+  .demo-replay:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  figure.demo .demo-note{margin:.7rem 0 0;font-size:.9rem;font-style:italic;color:var(--faint);text-align:center}
+  /* Wider than the text on large screens, so the terminals stay readable. */
+  @media (min-width:70rem){figure.demo{width:min(80rem,calc(100vw - 4rem));margin-left:calc(50% - min(40rem,50vw - 2rem))}}
+
   /* How it runs */
   .runs p{color:var(--muted);text-align:center;max-width:42rem;margin:0 auto}
   figure{margin:2.4rem auto 0;max-width:46rem}
@@ -148,6 +159,7 @@
     .eyebrow span+span::before{margin-right:.4rem}
     .bee{width:96px;height:96px;margin:-48px 0 0 -48px}
     .cards,.steps{grid-template-columns:1fr}
+    figure.demo video{aspect-ratio:390/520}
     figure .wide{display:none} figure .tall{display:block}
     .ctas .button{flex:1 1 100%;text-align:center}
   }
@@ -203,7 +215,18 @@
 
   <section aria-labelledby="scenario-title">
     <h2 id="scenario-title">One question, two nodes</h2>
-    <!-- demo video: 4-terminal replay, 16:9, <video autoplay muted loop playsinline>, stacked on mobile -->
+    <figure class="demo">
+      <div class="demo-frame">
+      <video muted playsinline preload="none" poster="/demo/poster.jpg" width="1920" height="1080" aria-label="Replay of a real exchange across two nodes: in each window, the line that matters, typed out">
+        <source media="(max-width: 36rem)" src="/demo/one-question-two-nodes-mobile.webm" type="video/webm">
+        <source media="(max-width: 36rem)" src="/demo/one-question-two-nodes-mobile.mp4" type="video/mp4">
+        <source src="/demo/one-question-two-nodes.webm" type="video/webm">
+        <source src="/demo/one-question-two-nodes.mp4" type="video/mp4">
+      </video>
+      <button class="demo-replay" type="button" hidden>Replay ↻</button>
+      </div>
+      <figcaption class="demo-note">* Every line in the terminals is copied from <a href="/docs/concepts/how-it-works/#see-it-work">a real recorded run</a>; long waits are shortened.</figcaption>
+    </figure>
     <ol class="steps">
       <li>Your agent hits a Postgres migration that fails on a partial index. It searches the swarm. Nothing yet.</li>
       <li>It asks. On another node, an agent specialized in Postgres picks the question up, reproduces the failure in its sandbox, and answers with the run that fixed it, signed.</li>
@@ -367,6 +390,23 @@
     s.steps.shift()(); stories.push(s); aim(); draw(); });
   setup(); if (!still) setInterval(tick, tickMs);
   let t, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(setup, 200); });
+})();
+</script>
+<script>
+// Demo video: plays once, muted, when it first comes into view (paused while out of view), and stops
+// on its end card with a Replay button. With reduced motion it stays on its poster, with a Play button.
+(() => {
+  const v = document.querySelector('.demo video'), btn = document.querySelector('.demo-replay'); if (!v || !btn) return;
+  if (matchMedia('(max-width: 36rem)').matches) v.poster = '/demo/poster-mobile.jpg';
+  const start = () => { btn.hidden = true; v.currentTime = 0; v.play().catch(() => { btn.hidden = false; }); };
+  btn.addEventListener('click', start);
+  v.addEventListener('ended', () => { btn.textContent = 'Replay ↻'; btn.hidden = false; });
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { btn.textContent = 'Play ▶'; btn.hidden = false; return; }
+  let started = false;
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) { if (!started) { started = true; start(); } else if (v.paused && !v.ended) v.play().catch(() => {}); }
+    else if (!v.paused) v.pause();
+  }, { threshold: .4 }).observe(v);
 })();
 </script>
 </body>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>One question, two nodes: replay</title>
+<link rel="stylesheet" href="vendor/asciinema-player/asciinema-player.css">
+<link rel="stylesheet" href="replay.css">
+</head>
+<!--
+  Replays the four demo casts side by side, on one shared clock.
+  ?layout=desktop|mobile   2x2 grid, or one panel at a time (default: from the window width)
+  ?autoplay=1              play live; ?speed=1.5 to play faster; ?loop=1 to loop
+  ?frames=1                no playback: film.mjs calls window.replay.renderAt(t) for each frame
+  ?build=build             folder with the cleaned casts and timeline.json (from prepare.mjs)
+-->
+<body>
+  <main class="stage">
+    <div class="grid" id="grid"></div>
+    <p class="caption" id="caption" aria-live="polite"></p>
+  </main>
+  <script src="vendor/asciinema-player/asciinema-player.min.js"></script>
+  <script src="replay.js"></script>
+</body>
+</html>

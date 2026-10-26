@@ -49,3 +49,9 @@
   color: var(--sl-color-gray-3);
 }
 .sl-markdown-content .wats-source a { color: inherit; }
+
+/* Demo videos (concepts/how-it-works#see-it-work). */
+.wats-video { margin: 1.5rem 0; }
+.wats-video video { display: block; width: 100%; height: auto; border-radius: 0.5rem; border: 1px solid var(--sl-color-gray-5); background: #101016; }
+.wats-video figcaption { margin-top: 0.5rem; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); }
+@media (max-width: 36rem) { .wats-video video { aspect-ratio: 390 / 460; } }
