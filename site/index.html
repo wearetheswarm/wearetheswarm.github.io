@@ -170,8 +170,6 @@
   .hive-ascii .t{color:var(--accent-text)} .hive-ascii .k{color:var(--honey);text-shadow:0 0 8px var(--honey)}
   .hive-ascii .x{box-shadow:0 0 0 1px var(--accent-text);border-radius:4px}
   .hive-ascii .g{color:var(--honey);text-shadow:0 0 10px rgba(255,209,102,.75)}
-  .bee{transition:filter .35s ease-out}
-  .bee.shared{filter:drop-shadow(0 0 16px rgba(255,209,102,.55))}
   .hive-ascii .h{background:var(--glow);border-radius:4px;box-shadow:0 0 0 1px rgba(159,168,255,.35)}
   @media (prefers-color-scheme:light){.hive-ascii{color:rgba(68,80,214,.24)}.hive-ascii .a{text-shadow:none}}
 </style>
@@ -346,11 +344,9 @@
     if (still) st.forEach((_, i) => { if (!blocked[i] && !edge[i] && Math.random() < .18) st[i] = 'f'; });
     draw(); };
   const busy = (i) => stories.some((s) => s.a === i);
-  // A cell filled: the filled cells glow for 400 ms, one after the other by distance, and the bee too.
-  const bee = pre.parentElement.querySelector('.bee');
+  // A cell filled: the filled cells glow for 400 ms, one after the other by distance.
   const shared = (a) => { const now = performance.now(), cx = (i) => Math.floor(i / R), cy = (i) => line(i) / 2;
-    st.forEach((s, i) => { if (s === 'f' && i !== a) { const d = Math.hypot(cx(i) - cx(a), cy(i) - cy(a)); glow.set(i, [now + d * 60, now + d * 60 + 400]); } });
-    bee.classList.remove('shared'); void bee.getBoundingClientRect(); bee.classList.add('shared'); setTimeout(() => bee.classList.remove('shared'), 450); };
+    st.forEach((s, i) => { if (s === 'f' && i !== a) { const d = Math.hypot(cx(i) - cx(a), cy(i) - cy(a)); glow.set(i, [now + d * 60, now + d * 60 + 400]); } }); };
   const story = (a) => { const fx = new Map(), steps = [], set = (i, v) => (v ? fx.set(i, v) : fx.delete(i));
     const dist = new Map([[a, 0]]), prev = new Map(), q = [a];
     while (q.length) { const i = q.shift(); for (const j of nb(i)) if (!dist.has(j) && !blocked[j]) { dist.set(j, dist.get(i) + 1); prev.set(j, i); q.push(j); } }
