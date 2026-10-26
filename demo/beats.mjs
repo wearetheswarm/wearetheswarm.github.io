@@ -1,6 +1,7 @@
 // Checks the storyboard's lines against the casts, then writes its timeline.
 //
-//   node beats.mjs [--in casts] [--beats beats.json] [--out build]
+//   node beats.mjs [--in casts] [--beats beats.json] [--out build] [--no-intro]
+//   --no-intro: for the homepage, where the hero above already says what the intro card says
 //
 // Every line of beats.json must be real: split on "…", each piece must appear, in order, in its
 // pane's cast (in one line for the line-based panes, in one screen for a full-screen app such as
@@ -58,7 +59,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const rate = story.rate ?? 30, hold = story.hold ?? 2, gap = story.gap ?? 0.5;
 // Cards (own copy, not from the casts): an intro, a title card before each captioned beat (it holds,
 // then moves down into the caption bar), and an end card that holds until the loop restarts.
-const intro = story.intro || { seconds: 0 }, card = story.titleCard || { hold: 2.3, move: 0.7 }, outro = story.outro || { seconds: 0 };
+const intro = 'no-intro' in args ? { ...story.intro, seconds: 0 } : story.intro || { seconds: 0 }, card = story.titleCard || { hold: 2.3, move: 0.7 }, outro = story.outro || { seconds: 0 };
 let t = intro.seconds + (story.lead ?? 1);
 const beats = [];
 let bad = 0, lastAt = -Infinity, lastText = '';
@@ -88,7 +89,9 @@ for (const [n, b] of story.beats.entries()) {
 if (bad) { console.error(`${bad} line(s) not found: fix beats.json`); process.exit(1); }
 const end = t + (story.tail ?? 1);
 const out = { duration: +(end + outro.seconds).toFixed(2), rate, panes: story.panes, beats,
-  intro: { ...intro, end: intro.seconds }, outro: { ...outro, start: +end.toFixed(3) } };
+  intro: { ...intro, end: intro.seconds }, outro: { ...outro, start: +end.toFixed(3) },
+  // The poster: mid-story, once the answer is stored and copied, both machines and the network lit.
+  poster: (() => { const b = beats.find((x) => x.spread); return b ? +(b.start + 2).toFixed(2) : intro.seconds / 2; })() };
 fs.writeFileSync(path.join(outDir, 'storyboard.json'), JSON.stringify(out, null, 2) + '\n');
 console.log(`${beats.length} beats, ${beats.reduce((a, b) => a + b.lines.length, 0)} lines, all found in the casts · ${out.duration} s`);
 for (const [i, b] of beats.entries()) console.log(`  ${String(i + 1).padStart(2)}  ${b.start.toFixed(1).padStart(5)} s  ${b.pane.padEnd(16)} ${b.lines.map((l) => l.text.slice(0, 60)).join(' | ')}`);

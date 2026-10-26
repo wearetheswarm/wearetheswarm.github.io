@@ -2,7 +2,7 @@
 
 This folder makes two videos of one real exchange. The exchange was recorded on the public network, in four terminals: your agent, your node, another node and the agent that answers there.
 
-- **The storyboard, on the homepage.** It shows two machines, left to right, with the network between them. In each window, only the line that matters at that moment is typed out, large. Step titles, an intro and an end card frame it.
+- **The storyboard, on the homepage.** It shows two machines, left to right, with the network between them. In each window, only the line that matters at that moment is typed out, large. Step titles and an end card frame it. The homepage version has no intro card, since the hero above already says it; the intro is kept for use elsewhere.
 - **The full replay, in the docs.** The four terminals are shown side by side, with idle time shortened, in *How it works → See it work*.
 
 The folder itself is not published. Only what `film.mjs` writes to `site/demo/` is.
@@ -27,7 +27,8 @@ Needs Node 22+, ffmpeg, asciinema (`beats.mjs` renders Claude Code's screens wit
 cd demo
 npm install
 cp ~/wats-demo/casts/*.cast ~/wats-demo/casts/*.start casts/
-node beats.mjs && node film.mjs                      # storyboard → site/demo/one-question-two-nodes*, poster*
+node beats.mjs --no-intro && node film.mjs           # homepage storyboard → site/demo/one-question-two-nodes*, poster*
+node beats.mjs && node film.mjs --out ~/Desktop       # the same with its intro card, for use outside the homepage
 node prepare.mjs && node film.mjs --page replay      # replay → site/demo/four-terminals*
 node film.mjs --stills 10,30 [--page replay]         # quick look: demo/frames/*.png
 ```
