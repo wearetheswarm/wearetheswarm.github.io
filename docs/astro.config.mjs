@@ -24,7 +24,7 @@ export default defineConfig({
       logo: { src: './src/assets/bee.svg', alt: '' },
       favicon: '/favicon.svg',
       customCss: ['./src/styles/custom.css'],
-      components: { Footer: './src/components/Footer.astro' },
+      components: { Footer: './src/components/Footer.astro', SiteTitle: './src/components/SiteTitle.astro' },
       lastUpdated: false,
       pagination: true,
       sidebar: [
