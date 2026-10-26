@@ -277,23 +277,25 @@
 </div>
 <script>
 // ASCII honeycomb: a cell asks (?), a ripple crosses its neighbours, another cell answers (✓), a trail
-// carries the answer back, the asker marks it (✓), then fills and stays filled. Past ~65 % full, the hive empties slowly.
-// Clicking a cell starts the loop from that cell. Decorative: aria-hidden, the page works without it.
+// carries the answer back, the asker marks it (✓), then fills and stays filled. Past ~65 % full, the hive
+// empties slowly. Each click starts its own story, so several can run at once. Decorative: aria-hidden.
 (() => {
   const pre = document.querySelector('.hive-ascii'); if (!pre) return;
   const [Q, W, A, F, T, K] = pre.dataset.glyphs.split(' '), G = { q: Q, w: W, a: A, f: F, t: T, k: K, h: '  ' }, tickMs = +pre.dataset.tick || 130;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let C = 0, R = 0, cw = 8, lh = 16, st = [], blocked = [], plan = [], hover = -1;
-  const pick = (xs) => xs[Math.floor(Math.random() * xs.length)];
+  let C = 0, R = 0, cw = 8, lh = 16, st = [], blocked = [], edge = [], stories = [], auto = null, hover = -1;
+  const pick = (xs) => xs[Math.floor(Math.random() * xs.length)], pause = (n) => Array(n).fill(() => {});
   const line = (i) => { const c = Math.floor(i / R), r = i % R; return c % 2 ? 2 * r + 2 : 2 * r + 1; };
   const nb = (i) => { const c = Math.floor(i / R), r = i % R, d = c % 2;
     return [[c, r - 1], [c, r + 1], [c - 1, r - 1 + d], [c - 1, r + d], [c + 1, r - 1 + d], [c + 1, r + d]]
       .filter(([x, y]) => x >= 0 && y >= 0 && x < C && y < R).map(([x, y]) => x * R + y); };
+  // What a cell shows: the newest story's effect on it (a ripple never covers a filled cell), else its own state.
+  const shown = (i) => { for (let s = stories.length - 1; s >= 0; s--) { const v = stories[s].fx.get(i); if (v && (v !== 'w' || !st[i])) return v; }
+    return st[i] || (i === hover && 'h'); };
   const draw = () => { let out = '';
     for (let L = 0; L < 2 * R + 2; L++) {
       for (let x = 0; x < 3 * C + 1; x++) {
-        const c = (x - 1) / 3, r = c % 2 ? (L - 2) / 2 : (L - 1) / 2, i = c * R + r;
-        const s = Number.isInteger(c) && Number.isInteger(r) && r >= 0 && r < R && (st[i] || (i === hover && 'h'));
+        const c = (x - 1) / 3, r = c % 2 ? (L - 2) / 2 : (L - 1) / 2, s = Number.isInteger(c) && Number.isInteger(r) && r >= 0 && r < R && shown(c * R + r);
         if (s) { out += `<b class="${s}">${G[s]}</b>`; x++; continue; }
         const m = x % 6; out += L === 0 ? (m === 1 || m === 2 ? '_' : ' ') : L % 2 ? '/  \\__'[m] : '\\__/  '[m];
       }
@@ -303,39 +305,44 @@
   const setup = () => { const probe = document.createElement('span'); probe.textContent = '0'.repeat(40); pre.replaceChildren(probe);
     const box = pre.getBoundingClientRect(); cw = probe.getBoundingClientRect().width / 40; lh = parseFloat(getComputedStyle(pre).lineHeight);
     C = Math.max(4, Math.floor((box.width / cw - 1) / 3)); R = Math.max(2, Math.floor((box.height / lh - 2) / 2));
-    st = Array(C * R).fill(0); plan = []; hover = -1;
-    const bee = pre.parentElement.querySelector('.bee').getBoundingClientRect(), pad = 1.5 * cw;
+    st = Array(C * R).fill(0); stories = []; auto = null; hover = -1;
+    const bee = pre.parentElement.querySelector('.bee').getBoundingClientRect(), far = st.map((_, i) => {
+      const x = (3 * Math.floor(i / R) + 2) * cw, y = (line(i) + 1) * lh; return Math.hypot(x / box.width * 2 - 1, y / box.height * 2 - 1); });
+    edge = far.map((d) => d > .85); // faint near the mask's edge: still clickable, but the auto loop stays inside
     blocked = st.map((_, i) => { const x = box.left + (3 * Math.floor(i / R) + 2) * cw, y = box.top + (line(i) + 1) * lh;
-      const ex = (x - box.left) / box.width * 2 - 1, ey = (y - box.top) / box.height * 2 - 1; // hidden by the mask past ~85 %
-      return Math.hypot(ex, ey) > .85 || (x > bee.left - pad && x < bee.right + pad && y > bee.top - lh && y < bee.bottom + lh); });
-    if (still) st.forEach((_, i) => { if (!blocked[i] && Math.random() < .18) st[i] = 'f'; });
+      return far[i] > .97 || (x > bee.left - cw && x < bee.right + cw && y > bee.top - lh / 2 && y < bee.bottom + lh / 2); });
+    if (still) st.forEach((_, i) => { if (!blocked[i] && !edge[i] && Math.random() < .18) st[i] = 'f'; });
     draw(); };
-  const ring = (dist, k, s) => dist.forEach((d, i) => { if (d === k && (st[i] === 0 || st[i] === 'w')) st[i] = s; });
-  const pause = (n) => Array(n).fill(() => {});
-  const cycle = (start) => { const usable = blocked.filter((b) => !b).length, filled = st.filter((s) => s === 'f').length;
-    if (start === undefined && filled > .65 * usable) { st.map((s, i) => (s === 'f' ? i : -1)).filter((i) => i >= 0).sort(() => Math.random() - .5)
-      .forEach((i) => plan.push(() => { st[i] = 0; }, () => {})); plan.push(...pause(8)); return; }
-    const free = st.map((s, i) => (!s && !blocked[i] ? i : -1)).filter((i) => i >= 0); if (free.length < 2) return;
-    const a = start ?? pick(free), dist = new Map([[a, 0]]), prev = new Map(), q = [a];
+  const busy = (i) => stories.some((s) => s.a === i);
+  const story = (a) => { const fx = new Map(), steps = [], set = (i, v) => (v ? fx.set(i, v) : fx.delete(i));
+    const dist = new Map([[a, 0]]), prev = new Map(), q = [a];
     while (q.length) { const i = q.shift(); for (const j of nb(i)) if (!dist.has(j) && !blocked[j]) { dist.set(j, dist.get(i) + 1); prev.set(j, i); q.push(j); } }
-    const far = [...dist].filter(([i, d]) => d >= 3 && d <= 4 && !st[i]), b = far.length ? pick(far)[0] : pick(free.filter((i) => i !== a)), D = dist.get(b) || 1;
-    plan.push(() => { st[a] = 'q'; }, ...pause(3));
-    for (let k = 1; k <= D; k++) plan.push(() => { ring(dist, k - 1, 0); st[a] = 'q'; ring(dist, k, 'w'); });
-    plan.push(() => { ring(dist, D, 0); ring(dist, D - 1, 0); st[a] = 'q'; st[b] = 'a'; }, ...pause(2));
-    for (let i = prev.get(b), last = b; i !== undefined && i !== a; last = i, i = prev.get(i)) { const cur = i, was = last; // trail back to the asker
-      plan.push(() => { if (st[was] === 't') st[was] = 0; if (st[cur] === 0) st[cur] = 't'; }, () => {}); }
-    plan.push(() => { st.forEach((s, i) => { if (s === 't' || s === 'a') st[i] = 0; }); st[a] = 'k'; }, ...pause(3), () => { st[a] = 'f'; }, ...pause(3)); };
-  const tick = () => { if (!plan.length) cycle(); (plan.shift() || (() => {}))(); draw(); };
-  // Pointer: find the open cell under the pointer (nearest cell centre within ~1.5 characters).
+    const ok = [...dist].filter(([i, d]) => d && !st[i] && !busy(i) && !edge[i]), near = ok.filter(([, d]) => d >= 3 && d <= 4);
+    if (!ok.length) return null;
+    const b = pick(near.length ? near : ok)[0], D = dist.get(b), ring = (k, v) => dist.forEach((d, i) => { if (d === k && i !== a) set(i, v); });
+    steps.push(() => set(a, 'q'), ...pause(3));
+    for (let k = 1; k <= D; k++) steps.push(() => { ring(k - 1, 0); ring(k, 'w'); });
+    steps.push(() => { ring(D - 1, 0); ring(D, 0); set(b, 'a'); }, ...pause(2));
+    for (let i = prev.get(b), was = b; i !== undefined && i !== a; was = i, i = prev.get(i)) { const cur = i, last = was; // trail back to the asker
+      steps.push(() => { if (fx.get(last) === 't') set(last, 0); set(cur, 't'); }, () => {}); }
+    steps.push(() => { fx.clear(); set(a, 'k'); }, ...pause(3), () => { fx.clear(); st[a] = 'f'; });
+    return { a, fx, steps }; };
+  const autoStory = () => { const usable = st.filter((_, i) => !blocked[i] && !edge[i]).length, filled = st.filter((s) => s === 'f').length;
+    if (filled > .65 * usable) { const steps = st.map((s, i) => (s === 'f' ? i : -1)).filter((i) => i >= 0).sort(() => Math.random() - .5)
+      .flatMap((i) => [() => { if (!busy(i)) st[i] = 0; }, () => {}]); return { a: -1, fx: new Map(), steps: [...steps, ...pause(8)] }; }
+    const free = st.map((s, i) => (!s && !blocked[i] && !edge[i] && !busy(i) ? i : -1)).filter((i) => i >= 0);
+    return free.length ? story(pick(free)) : null; };
+  const tick = () => { if (!stories.includes(auto)) { auto = autoStory(); if (auto) stories.push(auto); }
+    stories.forEach((s) => (s.steps.shift() || (() => {}))()); stories = stories.filter((s) => s.steps.length); draw(); };
+  // Pointer: the cell whose centre is nearest, if it can start a story.
   const cellAt = (e) => { const box = pre.getBoundingClientRect(), px = (e.clientX - box.left) / cw, py = (e.clientY - box.top) / lh;
     let best = -1, bd = 2.2; st.forEach((_, i) => { const d = Math.hypot((3 * Math.floor(i / R) + 2 - px) / 1.5, line(i) + 1 - py);
-      if (d < bd && !blocked[i]) { bd = d; best = i; } }); return best; };
-  pre.addEventListener('pointermove', (e) => { const i = cellAt(e), open = i >= 0 && st[i] !== 'f';
-    pre.style.cursor = open ? 'pointer' : ''; if ((open ? i : -1) !== hover) { hover = open ? i : -1; draw(); } });
+      if (d < bd) { bd = d; best = i; } }); return best >= 0 && !blocked[best] && st[best] !== 'f' && !busy(best) ? best : -1; };
+  pre.addEventListener('pointermove', (e) => { const i = cellAt(e); pre.style.cursor = i >= 0 ? 'pointer' : ''; if (i !== hover) { hover = i; draw(); } });
   pre.addEventListener('pointerleave', () => { hover = -1; pre.style.cursor = ''; draw(); });
-  pre.addEventListener('click', (e) => { const i = cellAt(e); if (i < 0 || st[i] === 'f') return;
+  pre.addEventListener('click', (e) => { const i = cellAt(e); if (i < 0) return;
     if (still) { st[i] = 'f'; draw(); return; }
-    plan = []; st = st.map((s) => (s === 'f' ? s : 0)); cycle(i); tick(); }); // pre-empt the auto loop, keep filled cells
+    const s = story(i); if (!s) return; s.steps.shift()(); stories.push(s); hover = -1; draw(); });
   setup(); if (!still) setInterval(tick, tickMs);
   let t, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(setup, 200); });
 })();
