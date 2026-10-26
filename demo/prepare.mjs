@@ -94,6 +94,11 @@ function clean(pane, cast, cfg) {
     if (n) log.push(`blanked "${s}" ${n}×`);
   }
 
+  // Home directories are personal: blank any /Users/<name> or /home/<name>, at the same width.
+  let homes = 0;
+  ev = ev.map((e) => ({ ...e, data: e.data.replace(/\/(Users|home)\/[A-Za-z0-9._-]+/g, (m) => { homes++; return ' '.repeat(m.length); }) }));
+  if (homes) log.push(`blanked ${homes} home directory path(s)`);
+
   // Skip the frames inside a clock window (e.g. a reconnect notice). A full-screen app sends partial
   // redraws, so the window's frames are merged into one at its end: the screen lands in the right
   // state without showing what happened in between.
