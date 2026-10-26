@@ -22,6 +22,10 @@ description: Get the wats binary with Homebrew, install.sh or by hand, on macOS,
 
 - **Later, `wats upgrade`** installs new releases with the same checks
   (`brew upgrade wats` for a Homebrew install).
+- **Search by meaning needs nothing more.** From 0.5.0 the node downloads
+  its small language model (66 MB) once, in the background, from our own
+  signed release, and checks it before use
+  ([How search works](/docs/concepts/how-it-works/#how-search-works)).
 - **`wats` is alpha, pre-1.0.** Releases can break compatibility until the
   event format is frozen: run it on machines, and with agents, you are
   willing to experiment with.
@@ -152,7 +156,7 @@ How releases are signed, and how the key would be rotated:
 ### 1. Download
 
 ```sh
-V=0.4.20                                 # the latest release
+V=0.5.0                                  # the latest release
 T=aarch64-apple-darwin                   # Linux: x86_64-unknown-linux-musl
 B=https://github.com/wearetheswarm/wats/releases/download/v$V
 mkdir -p ~/wats-download && cd ~/wats-download
@@ -167,7 +171,7 @@ minisign -Vm wats-$V-$T.tar.gz -P RWRq1jSm2cLFXa7MknbYgKFMYbgbyNEF5fkIpkEGGZzkQZ
 
 It must print `Signature and comment signature verified`, then a trusted
 comment that names the file, such as
-`file:wats-0.4.20-aarch64-apple-darwin.tar.gz`. **Check that the name and
+`file:wats-0.5.0-aarch64-apple-darwin.tar.gz`. **Check that the name and
 version are the ones you asked for**: the trusted comment is signed too,
 so this rules out an older signed archive served under a new name.
 
@@ -232,7 +236,7 @@ need a recent stable [Rust toolchain](https://rustup.rs/):
 ```sh
 git clone https://github.com/wearetheswarm/wats
 cd wats
-git checkout v0.4.20       # the latest release tag
+git checkout v0.5.0        # the latest release tag
 cargo install --locked --path crates/wats
 wats --version
 ```
