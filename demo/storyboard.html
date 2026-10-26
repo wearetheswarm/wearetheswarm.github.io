@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>One question, two nodes: storyboard</title>
+<link rel="stylesheet" href="storyboard.css">
+</head>
+<!--
+  The homepage storyboard: in each window, only the line that matters at that moment, typed out.
+  Every line comes from the casts (checked by beats.mjs, which writes build/storyboard.json).
+  ?layout=desktop|mobile   four panes, or one pane per beat
+  ?autoplay=1              play live (?loop=1 to loop); ?frames=1 for film.mjs
+-->
+<body>
+  <main class="stage">
+    <div class="grid" id="grid"></div>
+    <p class="caption" id="caption"></p>
+  </main>
+  <!-- Cards: our own copy, over the dimmed panes. -->
+  <div class="dim" id="dim"></div>
+  <section class="card" id="intro"><img class="bee" src="assets/bee.svg" alt=""><h1></h1><p class="tagline"></p><p class="teaser"></p></section>
+  <p class="title" id="title"><b></b><span></span></p>
+  <section class="card" id="outro"><p class="tagline"></p><h1></h1><code></code><p class="url"></p></section>
+  <script src="storyboard.js"></script>
+</body>
+</html>

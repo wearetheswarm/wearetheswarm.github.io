@@ -24,8 +24,9 @@
     grid.append(el);
     const player = AsciinemaPlayer.create({ url: `${build}/${p.id}.cast` }, el.querySelector('.term'), {
       autoPlay: false, preload: true, controls: false, loop: false, speed, theme: 'wats', cursorMode: 'hidden',
-      // Mobile: a fixed 12 px font, cropped to a window of the last lines (see crop below).
-      ...(layout === 'mobile' ? { fit: false, terminalFontSize: '12px' } : { fit: 'both' }), terminalFontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', terminalLineHeight: 1.25,
+      // Desktop: fit to the panel's width; mobile: a fixed 12 px font. Both show the last lines that fit (see crop).
+      // Node panes are plain lines: on mobile they wrap at 46 columns (the panel's width at 12 px) instead of being cut.
+      ...(layout === 'mobile' ? { fit: false, terminalFontSize: '12px', ...(p.id.endsWith('-node') ? { cols: 46, rows: 40 } : {}) } : { fit: 'width' }), terminalFontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', terminalLineHeight: 1.25,
     });
     return { pane: p, el, player };
   });
@@ -49,19 +50,21 @@
       const on = x.pane.id === f.pane;
       x.el.classList.toggle('active', on);
       if (layout === 'mobile') { x.el.style.opacity = on ? fade(t, f.t, 0.25) : 0; if (on) crop(x); }
-      else x.el.querySelector('.term').style.opacity = on ? 1 : 0.5;
+      else { x.el.querySelector('.term').style.opacity = on ? 1 : 0.5; crop(x); }
     }
   };
 
-  // Mobile crop: show the last `rows` non-empty lines; the panel's width cuts at about 50 columns.
-  const rows = 12;
+  // Crop: show the last non-empty lines that fit in the panel (12 on mobile, where the width also
+  // cuts the agent panes at about 50 columns).
   const crop = (x) => {
     if (q.get('nocrop')) return;
     const lines = [...x.el.querySelectorAll('.ap-line')];
+    if (!lines[1]) return;
+    const step = lines[1].offsetTop - lines[0].offsetTop;
+    const rows = Math.max(1, Math.floor((x.el.querySelector('.clip').clientHeight - 12) / step));
     const last = lines.findLastIndex((l) => l.textContent.trim());
     const top = Math.max(0, last - rows + 1);
-    const term = x.el.querySelector('.term');
-    if (lines[1]) term.style.transform = `translateY(${-(lines[1].offsetTop - lines[0].offsetTop) * top}px)`;
+    x.el.querySelector('.term').style.transform = `translateY(${-step * top}px)`;
   };
 
   const seekAll = (t) => Promise.all(players.map((x) => x.player.seek(Math.min(t, x.player.getDuration()))));

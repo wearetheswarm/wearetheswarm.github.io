@@ -19,21 +19,21 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/
 .ap-player{border-radius:0!important}
 .ap-overlay,.ap-control-bar{display:none!important}
 
-.stage{height:100%;display:flex;flex-direction:column;padding:28px 28px 0}
-.grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:18px}
+.stage{height:100%;display:flex;flex-direction:column;padding:18px 18px 0}
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
 .panel{min-width:0;min-height:0;display:flex;flex-direction:column;background:#101016;border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:none}
-.panel header{display:flex;align-items:baseline;gap:.8rem;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
-.panel h2{margin:0;font-size:20px;font-weight:650;letter-spacing:-.01em}
+.panel header{display:flex;align-items:baseline;gap:.8rem;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--surface)}
+.panel h2{margin:0;font-size:17px;font-weight:650;letter-spacing:-.01em}
 .panel .note{font-size:14px;color:var(--muted)}
 .panel .note code{font-family:var(--mono);color:var(--accent-text)}
-.panel .clip{flex:1;min-height:0;display:flex}
-.panel .term{flex:1;min-height:0;padding:8px 10px;display:flex;align-items:flex-start}
+.panel .clip{flex:1;min-height:0;overflow:hidden;display:block}
+.panel .term{display:block;padding:6px 8px}
 .panel .term > div{width:100%}
 .panel.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 28px -6px rgba(111,123,255,.45)}
 .panel.active h2{color:var(--accent-text)}
 
-.caption{height:96px;margin:0;display:flex;align-items:center;justify-content:center;gap:1rem;font-size:30px;font-weight:600;letter-spacing:-.01em}
-.caption b{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--surface-2);color:var(--honey);font-size:24px}
+.caption{height:70px;margin:0;display:flex;align-items:center;justify-content:center;gap:.8rem;font-size:23px;font-weight:600;letter-spacing:-.01em}
+.caption b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--surface-2);color:var(--honey);font-size:19px}
 
 /* Mobile: one panel at a time, its role as the title. */
 .mobile .stage{padding:16px 12px 0}

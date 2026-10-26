@@ -109,6 +109,8 @@
   /* Demo video (made in demo/: replay of the real casts, filmed frame by frame) */
   figure.demo{max-width:none;margin:0 0 1.4rem}
   figure.demo video{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:14px;border:1px solid var(--border);background:#101016}
+  /* Wider than the text on large screens, so the terminals stay readable. */
+  @media (min-width:70rem){figure.demo{width:min(80rem,calc(100vw - 4rem));margin-left:calc(50% - min(40rem,50vw - 2rem))}}
 
   /* How it runs */
   .runs p{color:var(--muted);text-align:center;max-width:42rem;margin:0 auto}

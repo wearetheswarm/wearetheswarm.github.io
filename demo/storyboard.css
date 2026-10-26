@@ -1,0 +1,67 @@
+/* The site's colours (site/index.html). Sizes are CSS pixels; film.mjs films desktop at 1.5x. */
+:root{
+  --bg:#0b0b0f; --surface:#14141b; --term:#101016; --surface-2:#1d2052; --border:#2a2a35; --border-strong:#3a3a48;
+  --text:#e8e8ef; --muted:#b0b0c0; --faint:#7d7d8f; --accent:#6f7bff; --accent-text:#9fa8ff; --honey:#ffd166;
+  --green:#7ee0a1; --red:#ff6b81; --cyan:#7fd6e8;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+.stage{height:100%;display:flex;flex-direction:column;padding:18px 18px 0}
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
+.pane{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--term);border:1px solid var(--border);border-radius:14px;overflow:hidden;opacity:.4}
+.pane header{display:flex;align-items:baseline;gap:.7rem;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.pane h2{margin:0;font-size:17px;font-weight:650;letter-spacing:-.01em}
+.pane .note{font-size:13px;color:var(--muted)}
+.pane .note code{font-family:var(--mono);color:var(--accent-text)}
+.pane.active{opacity:1;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 28px -6px rgba(111,123,255,.45)}
+.pane.active h2{color:var(--accent-text)}
+
+/* The lines: newest at the bottom, older ones faded. */
+.lines{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:12px 16px 16px;overflow:hidden}
+.line{margin:0;font:400 20px/1.4 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text)}
+.line.old{opacity:.45}
+.line .ts{color:var(--faint)}
+.line.prompt{color:var(--text);font-weight:600}
+.line.prompt .mark{color:var(--accent-text)}
+.line .mark{color:var(--faint)}
+.line.ok{color:var(--green)}
+.line.err{color:var(--red)}
+.line.ask{color:var(--cyan)}
+.line.cmd{color:var(--accent-text)}
+.cursor{display:inline-block;width:.6em;height:1.1em;vertical-align:-.15em;background:var(--accent-text);margin-left:1px}
+
+.caption{height:70px;margin:0;display:flex;align-items:center;justify-content:center;gap:.8rem;font-size:23px;font-weight:600;letter-spacing:-.01em}
+.caption b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--surface-2);color:var(--honey);font-size:19px}
+
+/* Mobile: one pane per beat, full width, the same large type. */
+.mobile .stage{padding:14px 12px 0}
+.mobile .grid{display:block;position:relative;flex:none;height:380px}
+.mobile .pane{position:absolute;inset:0}
+.mobile .pane header{flex-direction:column;align-items:flex-start;gap:2px;padding:10px 14px}
+.mobile .pane h2{font-size:21px}
+.mobile .line{font-size:17px}
+.mobile .caption{flex:1;height:auto;font-size:19px;line-height:1.3;justify-content:flex-start;padding:0 4px}
+.mobile .caption b{flex:none;width:34px;height:34px;font-size:18px}
+
+/* Cards: the intro, the step titles and the end card, over the dimmed panes. */
+.dim{position:fixed;inset:0;background:var(--bg);opacity:0;pointer-events:none}
+.card{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;padding:0 40px}
+.card h1{margin:.2em 0 .1em;font-size:52px;line-height:1.05;letter-spacing:-.035em}
+.card .tagline{margin:0;font-size:26px;color:var(--text)}
+.card .teaser{margin:1.1em 0 0;font-size:21px;color:var(--muted)}
+.card .bee{width:96px;height:96px;image-rendering:pixelated}
+.card code{margin:.9em 0 .6em;padding:.55em 1em;border:1px solid var(--border-strong);border-radius:12px;background:var(--surface);font:500 22px var(--mono);color:var(--text)}
+.card code::before{content:"$ ";color:var(--honey)}
+.card .url{margin:0;font-size:22px;color:var(--accent-text);font-weight:600}
+#outro h1{font-size:46px;margin-top:.5em}
+.title{position:fixed;left:50%;top:44%;margin:0;width:max-content;max-width:84vw;display:flex;align-items:center;gap:.6em;font-size:44px;line-height:1.15;font-weight:650;letter-spacing:-.02em;opacity:0;transform-origin:center}
+.title b{flex:none;display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:.4em;background:var(--surface-2);color:var(--honey);font-size:.8em}
+.mobile .card h1{font-size:36px}
+.mobile .card .tagline{font-size:20px}
+.mobile .card .teaser{font-size:17px}
+.mobile .card code{font-size:13px;white-space:nowrap;padding:.5em .7em}
+.mobile .card .url{font-size:18px}
+.mobile #outro h1{font-size:32px}
+.mobile .title{font-size:27px;max-width:88vw}

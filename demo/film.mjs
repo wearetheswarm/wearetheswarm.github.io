@@ -1,10 +1,13 @@
-// Films replay.html frame by frame and encodes the homepage video with ffmpeg.
+// Films a page frame by frame and encodes the video with ffmpeg:
+//   --page storyboard (default)  storyboard.html, the homepage video: one-question-two-nodes[-mobile]
+//   --page replay                replay.html, the four terminals in full: four-terminals[-mobile]
 //
-//   node prepare.mjs && node film.mjs [--layout desktop|mobile|all] [--fps 30] [--out ../site/demo]
+//   node beats.mjs && node film.mjs [--layout desktop|mobile|all] [--fps 30] [--out ../site/demo]
+//   node prepare.mjs && node film.mjs --page replay
 //   node film.mjs --stills 3,12,25   only screenshots at these times (in frames/), for a quick look
 //
-// Each frame seeks all four players to the same time before the screenshot, so the panels stay in
-// step and a rerun gives the same video. Needs ffmpeg, and Chrome (or set CHROME to a Chromium binary).
+// Each frame is a pure function of its time (the replay seeks all four players to it), so the panels
+// stay in step and a rerun gives the same video. Needs ffmpeg, and Chrome (or set CHROME to a Chromium binary).
 
 import fs from 'node:fs';
 import http from 'node:http';
@@ -16,16 +19,20 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, all) => (
 const here = path.dirname(new URL(import.meta.url).pathname);
 const outDir = path.resolve(args.out || path.join(here, '../site/demo'));
 const fps = +(args.fps || 30);
-const name = 'one-question-two-nodes';
+const pageName = args.page || 'storyboard';
+const { name, poster, mobileHeight } = {
+  storyboard: { name: 'one-question-two-nodes', poster: 'poster', mobileHeight: 520 },
+  replay: { name: 'four-terminals', poster: 'four-terminals-poster', mobileHeight: 460 },
+}[pageName];
 const layouts = {
-  desktop: { viewport: { width: 1920, height: 1080 }, scale: 1, suffix: '' },
-  mobile: { viewport: { width: 390, height: 460 }, scale: 2, suffix: '-mobile' },
+  desktop: { viewport: { width: 1280, height: 720 }, scale: 1.5, suffix: '' }, // a 1920x1080 file with text 1.5x larger in it
+  mobile: { viewport: { width: 390, height: mobileHeight }, scale: 2, suffix: '-mobile' },
 };
 const chosen = !args.layout || args.layout === 'all' ? Object.keys(layouts) : [args.layout];
 const chrome = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 // A small static server for the demo folder.
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.cast': 'text/plain; charset=utf-8' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.cast': 'text/plain; charset=utf-8', '.svg': 'image/svg+xml' };
 const server = http.createServer((req, res) => {
   const file = path.join(here, decodeURIComponent(new URL(req.url, 'http://x').pathname));
   if (!file.startsWith(here) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404).end(); return; }
@@ -48,7 +55,7 @@ try {
   for (const key of chosen) {
     const L = layouts[key];
     const page = await browser.newPage({ viewport: L.viewport, deviceScaleFactor: L.scale });
-    await page.goto(`${base}/replay.html?frames=1&layout=${key}${args.query ? `&${args.query}` : ''}`);
+    await page.goto(`${base}/${pageName}.html?frames=1&layout=${key}${args.query ? `&${args.query}` : ''}`);
     await page.waitForFunction(() => document.documentElement.dataset.ready === '1', null, { timeout: 30000 });
     const duration = await page.evaluate(() => window.replay.duration);
     const shot = async (t, opts) => { await page.evaluate((x) => window.replay.renderAt(x), t); return page.screenshot(opts); };
@@ -61,7 +68,7 @@ try {
     }
 
     // Poster: the end, with all four panels filled (shown when motion is reduced, and before playback).
-    await shot(Math.max(0, duration - 0.5), { path: path.join(outDir, `poster${L.suffix}.jpg`), type: 'jpeg', quality: 85 });
+    await shot(Math.max(0, duration - 0.5), { path: path.join(outDir, `${poster}${L.suffix}.jpg`), type: 'jpeg', quality: 85 });
 
     const frames = Math.ceil(duration * fps);
     const out = path.join(outDir, `${name}${L.suffix}`);

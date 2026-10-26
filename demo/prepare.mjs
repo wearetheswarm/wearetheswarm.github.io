@@ -56,6 +56,11 @@ function clean(pane, cast, cfg) {
       if (j > 0) { log.push(`dropped ${j} banner lines`); ev[0] = { ...ev[0], data: parts.slice(j).join('') }; }
     }
   }
+  // Drop everything after a clock time (e.g. the operator quitting the session).
+  if (cfg.dropAfter) {
+    const n = ev.filter((e) => clock(e.at) >= cfg.dropAfter).length;
+    if (n) { log.push(`dropped ${n} events from ${cfg.dropAfter}`); ev = ev.filter((e) => clock(e.at) < cfg.dropAfter); }
+  }
   if (cfg.dropFrom) {
     const i = ev.findIndex((e) => re(cfg.dropFrom).test(visible(e.data)));
     if (i >= 0) { log.push(`dropped ${ev.length - i} events from ${clock(ev[i].at)} (/${cfg.dropFrom}/)`); ev = ev.slice(0, i); }
@@ -111,17 +116,21 @@ const t0 = Math.min(...panes.map((p) => p.cast.start));
 
 // --- the shared clock: significant events from all panes, in time order
 // A tick is a small redraw (spinner, counter, status line): it doesn't reset the idle clock.
-const tick = (p, e) => { const v = visible(e.data).trim(); return v.length <= (p.tickMaxChars ?? 12) || (p.ticks ? re(p.ticks).test(v) : false); };
+// A long redraw that also repaints the status line is not a tick: only short ones are.
+const tick = (p, e) => { const v = visible(e.data).trim(); return v.length <= (p.tickMaxChars ?? 12) || (p.ticks ? re(p.ticks).test(v) && v.length <= (p.tickMaxLen ?? 100) : false); };
 const sig = panes.flatMap((p) => p.events.filter((e) => !tick(p, e)).map((e) => ({ at: e.at, pane: p.id, text: visible(e.data) }))).sort((a, b) => a.at - b.at);
 const cap = edits.idleCap ?? 1.2;
 const capFor = (paneId) => panes.find((p) => p.id === paneId).idleCap ?? cap; // the pane that ends the gap sets its cap
 const holdAfter = (s) => (edits.holds || []).filter((h) => h.pane === s.pane && re(h.match).test(s.text)).reduce((a, h) => Math.max(a, h.seconds), 0);
+const spent = {}; // replay seconds per pane, for tuning
 const knots = [{ at: t0, t: 0 }]; // piecewise-linear map from real time to replay time
 let prev = { at: t0, hold: 0 };
 for (const s of sig) {
   const gap = s.at - prev.at;
   if (gap <= 0) continue;
-  knots.push({ at: s.at, t: knots[knots.length - 1].t + Math.min(gap, capFor(s.pane)) + prev.hold });
+  const add = Math.min(gap, capFor(s.pane)) + prev.hold;
+  spent[s.pane] = (spent[s.pane] || 0) + Math.min(gap, capFor(s.pane)); spent.holds = (spent.holds || 0) + prev.hold;
+  knots.push({ at: s.at, t: knots[knots.length - 1].t + add });
   prev = { at: s.at, hold: holdAfter(s) };
 }
 const lastAt = Math.max(...panes.map((p) => (p.events.length ? p.events[p.events.length - 1].at : t0)));
@@ -162,4 +171,5 @@ console.log(`real ${((lastAt - t0) / 60).toFixed(1)} min → replay ${duration.t
 for (const p of panes) console.log(`\n${p.id} (${p.size.cols}x${p.size.rows}, ${p.events.length} events)\n  ${p.log.join('\n  ') || 'no edits'}`);
 console.log('\ncaptions:', captions.map((c) => `${c.t}s ${c.text}`).join(' | '));
 if (missing.length) console.log('captions with no matching event:', missing.map((c) => c.text).join(' | '));
+console.log('time per pane:', Object.entries(spent).map(([k, v]) => `${k} ${v.toFixed(1)} s`).join(', '), `, tail ${edits.tail ?? 3} s`);
 console.log('focus:', focus.map((f) => `${f.t}s ${f.pane}`).join(' → '));
