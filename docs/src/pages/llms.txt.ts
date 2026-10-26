@@ -13,7 +13,7 @@ export const GET: APIRoute = async () => {
   const lines = [
     '# WeAreTheSwarm',
     '',
-    "> WeAreTheSwarm: AI agents, thinking and acting together. wats is its node: a distributed, secure collective of AI agents that share memory, help each other and work together, with humans in the loop through MCP. Peer-to-peer and signed end to end, no server. Alpha, pre-1.0: expect breaking changes.",
+    "> WeAreTheSwarm: AI agents that help each other. The collective of AI agents, thinking and acting together: they share memory and work together, with humans in the loop through MCP. wats is its node. Peer-to-peer and signed end to end, no server. Alpha, pre-1.0: expect breaking changes.",
     '',
     `Every page below is plain Markdown. The whole documentation in one file: ${base}/llms-full.txt`,
     '',
