@@ -156,6 +156,10 @@
   .hive-ascii b{display:inline-block;width:2ch;height:1.2em;vertical-align:top;text-align:center;font-weight:600;line-height:1.2em;transform:translateY(50%)}
   .hive-ascii .q{color:var(--text)} .hive-ascii .w{color:var(--accent-text)} .hive-ascii .a{color:var(--accent-text);text-shadow:0 0 8px var(--accent)} .hive-ascii .f{color:var(--honey);opacity:.85}
   .hive-ascii .t{color:var(--accent-text)} .hive-ascii .k{color:var(--honey);text-shadow:0 0 8px var(--honey)}
+  .hive-ascii .x{box-shadow:0 0 0 1px var(--accent-text);border-radius:4px}
+  .hive-ascii .g{color:var(--honey);text-shadow:0 0 10px rgba(255,209,102,.75)}
+  .bee{transition:filter .35s ease-out}
+  .bee.shared{filter:drop-shadow(0 0 16px rgba(255,209,102,.55))}
   .hive-ascii .h{background:var(--glow);border-radius:4px;box-shadow:0 0 0 1px rgba(159,168,255,.35)}
   @media (prefers-color-scheme:light){.hive-ascii{color:rgba(68,80,214,.24)}.hive-ascii .a{text-shadow:none}}
 </style>
@@ -279,24 +283,28 @@
 <script>
 // ASCII honeycomb: a cell asks (?), a ripple crosses its neighbours, another cell answers (✓), a trail
 // carries the answer back, the asker marks it (✓), then fills and stays filled. Past ~65 % full, the hive
-// empties slowly. Each click starts its own story, so several can run at once. Decorative: aria-hidden.
+// empties slowly. Each click starts its own story, so several can run at once. When a cell fills, the
+// filled cells glow in turn from it: the knowledge is shared. Decorative: aria-hidden.
 (() => {
   const pre = document.querySelector('.hive-ascii'); if (!pre) return;
-  const [Q, W, A, F, T, K] = pre.dataset.glyphs.split(' '), G = { q: Q, w: W, a: A, f: F, t: T, k: K, h: '  ' }, tickMs = +pre.dataset.tick || 130;
+  const [Q, W, A, F, T, K] = pre.dataset.glyphs.split(' '), G = { q: Q, w: W, a: A, f: F, t: T, k: K, h: '  ', x: '  ', g: F }, tickMs = +pre.dataset.tick || 130;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let C = 0, R = 0, cw = 8, lh = 16, st = [], blocked = [], edge = [], stories = [], auto = null, hover = -1;
+  let C = 0, R = 0, cw = 8, lh = 16, st = [], blocked = [], edge = [], stories = [], auto = null, hover = -1, pointer = null;
+  const glow = new Map(), flash = new Map(); // cell → [from, to] in ms: a filled cell's glow, a refused click's flash
   const pick = (xs) => xs[Math.floor(Math.random() * xs.length)], pause = (n) => Array(n).fill(() => {});
   const line = (i) => { const c = Math.floor(i / R), r = i % R; return c % 2 ? 2 * r + 2 : 2 * r + 1; };
   const nb = (i) => { const c = Math.floor(i / R), r = i % R, d = c % 2;
     return [[c, r - 1], [c, r + 1], [c - 1, r - 1 + d], [c - 1, r + d], [c + 1, r - 1 + d], [c + 1, r + d]]
       .filter(([x, y]) => x >= 0 && y >= 0 && x < C && y < R).map(([x, y]) => x * R + y); };
   // What a cell shows: the newest story's effect on it (a ripple never covers a filled cell), else its own state.
-  const shown = (i) => { for (let s = stories.length - 1; s >= 0; s--) { const v = stories[s].fx.get(i); if (v && (v !== 'w' || !st[i])) return v; }
-    return st[i] || (i === hover && 'h'); };
-  const draw = () => { let out = '';
+  const on = (m, i, now) => { const w = m.get(i); return w && now >= w[0] && now < w[1]; };
+  const shown = (i, now = performance.now()) => { if (on(flash, i, now)) return 'x';
+    for (let s = stories.length - 1; s >= 0; s--) { const v = stories[s].fx.get(i); if (v && (v !== 'w' || !st[i])) return v; }
+    return (st[i] === 'f' && on(glow, i, now) && 'g') || st[i] || (i === hover && 'h'); };
+  const draw = () => { let out = ''; const now = performance.now();
     for (let L = 0; L < 2 * R + 2; L++) {
       for (let x = 0; x < 3 * C + 1; x++) {
-        const c = (x - 1) / 3, r = c % 2 ? (L - 2) / 2 : (L - 1) / 2, s = Number.isInteger(c) && Number.isInteger(r) && r >= 0 && r < R && shown(c * R + r);
+        const c = (x - 1) / 3, r = c % 2 ? (L - 2) / 2 : (L - 1) / 2, s = Number.isInteger(c) && Number.isInteger(r) && r >= 0 && r < R && shown(c * R + r, now);
         if (s) { out += `<b class="${s}">${G[s]}</b>`; x++; continue; }
         const m = x % 6; out += L === 0 ? (m === 1 || m === 2 ? '_' : ' ') : L % 2 ? '/  \\__'[m] : '\\__/  '[m];
       }
@@ -306,7 +314,7 @@
   const setup = () => { const probe = document.createElement('span'); probe.textContent = '0'.repeat(40); pre.replaceChildren(probe);
     const box = pre.getBoundingClientRect(); cw = probe.getBoundingClientRect().width / 40; lh = parseFloat(getComputedStyle(pre).lineHeight);
     C = Math.max(4, Math.floor((box.width / cw - 1) / 3)); R = Math.max(2, Math.floor((box.height / lh - 2) / 2));
-    st = Array(C * R).fill(0); stories = []; auto = null; hover = -1;
+    st = Array(C * R).fill(0); stories = []; auto = null; hover = -1; glow.clear(); flash.clear();
     const bee = pre.parentElement.querySelector('.bee').getBoundingClientRect(), far = st.map((_, i) => {
       const x = (3 * Math.floor(i / R) + 2) * cw, y = (line(i) + 1) * lh; return Math.hypot(x / box.width * 2 - 1, y / box.height * 2 - 1); });
     edge = far.map((d) => d > .85); // faint near the mask's edge: still clickable, but the auto loop stays inside
@@ -315,6 +323,11 @@
     if (still) st.forEach((_, i) => { if (!blocked[i] && !edge[i] && Math.random() < .18) st[i] = 'f'; });
     draw(); };
   const busy = (i) => stories.some((s) => s.a === i);
+  // A cell filled: the filled cells glow for 400 ms, one after the other by distance, and the bee too.
+  const bee = pre.parentElement.querySelector('.bee');
+  const shared = (a) => { const now = performance.now(), cx = (i) => Math.floor(i / R), cy = (i) => line(i) / 2;
+    st.forEach((s, i) => { if (s === 'f' && i !== a) { const d = Math.hypot(cx(i) - cx(a), cy(i) - cy(a)); glow.set(i, [now + d * 60, now + d * 60 + 400]); } });
+    bee.classList.remove('shared'); void bee.getBoundingClientRect(); bee.classList.add('shared'); setTimeout(() => bee.classList.remove('shared'), 450); };
   const story = (a) => { const fx = new Map(), steps = [], set = (i, v) => (v ? fx.set(i, v) : fx.delete(i));
     const dist = new Map([[a, 0]]), prev = new Map(), q = [a];
     while (q.length) { const i = q.shift(); for (const j of nb(i)) if (!dist.has(j) && !blocked[j]) { dist.set(j, dist.get(i) + 1); prev.set(j, i); q.push(j); } }
@@ -326,7 +339,7 @@
     steps.push(() => { ring(D - 1, 0); ring(D, 0); set(b, 'a'); }, ...pause(2));
     for (let i = prev.get(b), was = b; i !== undefined && i !== a; was = i, i = prev.get(i)) { const cur = i, last = was; // trail back to the asker
       steps.push(() => { if (fx.get(last) === 't') set(last, 0); set(cur, 't'); }, () => {}); }
-    steps.push(() => { fx.clear(); set(a, 'k'); }, ...pause(3), () => { fx.clear(); st[a] = 'f'; });
+    steps.push(() => { fx.clear(); set(a, 'k'); }, ...pause(3), () => { fx.clear(); st[a] = 'f'; shared(a); });
     return { a, fx, steps }; };
   const autoStory = () => { const usable = st.filter((_, i) => !blocked[i] && !edge[i]).length, filled = st.filter((s) => s === 'f').length;
     if (filled > .65 * usable) { const steps = st.map((s, i) => (s === 'f' ? i : -1)).filter((i) => i >= 0).sort(() => Math.random() - .5)
@@ -334,16 +347,24 @@
     const free = st.map((s, i) => (!s && !blocked[i] && !edge[i] && !busy(i) ? i : -1)).filter((i) => i >= 0);
     return free.length ? story(pick(free)) : null; };
   const tick = () => { if (!stories.includes(auto)) { auto = autoStory(); if (auto) stories.push(auto); }
-    stories.forEach((s) => (s.steps.shift() || (() => {}))()); stories = stories.filter((s) => s.steps.length); draw(); };
-  // Pointer: the cell whose centre is nearest, if it can start a story.
-  const cellAt = (e) => { const box = pre.getBoundingClientRect(), px = (e.clientX - box.left) / cw, py = (e.clientY - box.top) / lh;
+    stories.forEach((s) => (s.steps.shift() || (() => {}))()); stories = stories.filter((s) => s.steps.length); aim(); draw(); };
+  // Pointer: the cell under it (nearest centre), and whether it can start a story now. Cells change
+  // under a still pointer, so the cursor and the highlight are checked again at every tick.
+  const startable = (i) => i >= 0 && !blocked[i] && st[i] !== 'f' && !busy(i);
+  const cellAt = (p) => { const box = pre.getBoundingClientRect(), px = (p.clientX - box.left) / cw, py = (p.clientY - box.top) / lh;
     let best = -1, bd = 2.2; st.forEach((_, i) => { const d = Math.hypot((3 * Math.floor(i / R) + 2 - px) / 1.5, line(i) + 1 - py);
-      if (d < bd) { bd = d; best = i; } }); return best >= 0 && !blocked[best] && st[best] !== 'f' && !busy(best) ? best : -1; };
-  pre.addEventListener('pointermove', (e) => { const i = cellAt(e); pre.style.cursor = i >= 0 ? 'pointer' : ''; if (i !== hover) { hover = i; draw(); } });
-  pre.addEventListener('pointerleave', () => { hover = -1; pre.style.cursor = ''; draw(); });
-  pre.addEventListener('click', (e) => { const i = cellAt(e); if (i < 0) return;
-    if (still) { st[i] = 'f'; draw(); return; }
-    const s = story(i); if (!s) return; s.steps.shift()(); stories.push(s); hover = -1; draw(); });
+      if (d < bd) { bd = d; best = i; } }); return best >= 0 && !blocked[best] ? best : -1; };
+  const aim = () => { const i = pointer ? cellAt(pointer) : -1, ok = startable(i);
+    pre.style.cursor = ok ? 'pointer' : ''; hover = ok ? i : -1; };
+  pre.addEventListener('pointermove', (e) => { pointer = { clientX: e.clientX, clientY: e.clientY }; const was = hover; aim(); if (hover !== was) draw(); });
+  pre.addEventListener('pointerleave', () => { pointer = null; aim(); draw(); });
+  pre.addEventListener('click', (e) => { const at = cellAt(e); if (at < 0) return;
+    // A cell that can't start (filled, or already asking) hands over to a free neighbour, or flashes.
+    const i = startable(at) ? at : (nb(at).find(startable) ?? -1), now = performance.now();
+    if (i < 0) { flash.set(at, [now, now + 300]); draw(); setTimeout(draw, 320); return; }
+    if (still) { st[i] = 'f'; aim(); draw(); return; }
+    const s = story(i); if (!s) { flash.set(i, [now, now + 300]); draw(); setTimeout(draw, 320); return; }
+    s.steps.shift()(); stories.push(s); aim(); draw(); });
   setup(); if (!still) setInterval(tick, tickMs);
   let t, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(setup, 200); });
 })();
