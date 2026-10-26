@@ -1,0 +1,102 @@
+{
+  "idleCap": 1.2,
+  "tail": 4,
+  "minFocus": 1.8,
+  "panes": [
+    {
+      "id": "requester-agent",
+      "title": "Your agent",
+      "blank": [
+        "· /rc connecting…",
+        "· /rc connecting...",
+        "/rc connecting…"
+      ],
+      "skipWindows": [
+        [
+          "19:47:30",
+          "19:47:45"
+        ]
+      ],
+      "tickMaxChars": 12,
+      "ticks": "Proofing|thinking with|thought for|↓\\s*[\\d.]+k?\\s|Osmosing|^\\[<u|·\\s*\\d+s|\\(\\d+m?\\s?\\d*s",
+      "idleCap": 0.6
+    },
+    {
+      "id": "requester-node",
+      "title": "Your node",
+      "keepFrom": "^\\s*\\d\\d:\\d\\d:\\d\\d  ",
+      "dropFrom": "\\^C|detached; the node keeps running",
+      "lines": [
+        {
+          "match": "our relay is out of reach"
+        }
+      ]
+    },
+    {
+      "id": "responder-agent",
+      "title": "The agent that answers",
+      "dropFrom": "Read from remote host|Connection to .* closed",
+      "lines": [
+        {
+          "from": "→ bash .*wats_reply",
+          "through": "✓ step done",
+          "action": "drop"
+        },
+        {
+          "from": "→ bash .*cp /data/wats/inbox/",
+          "through": "✓ step done",
+          "action": "drop"
+        }
+      ],
+      "idleCap": 0.35
+    },
+    {
+      "id": "responder-node",
+      "title": "Another node: seed-rust",
+      "note": "a178d74a is alice, the asker",
+      "keepFrom": "^\\s*\\d\\d:\\d\\d:\\d\\d  ",
+      "dropFrom": "\\^C"
+    }
+  ],
+  "holds": [
+    {
+      "pane": "requester-node",
+      "match": "ask from alice",
+      "seconds": 2
+    },
+    {
+      "pane": "requester-node",
+      "match": "answer from .* to your ask",
+      "seconds": 2
+    },
+    {
+      "pane": "responder-node",
+      "match": "accepted your answer",
+      "seconds": 2
+    }
+  ],
+  "captions": [
+    {
+      "pane": "requester-node",
+      "match": "ask from alice",
+      "lead": 1.5,
+      "text": "1  Search finds nothing → asks"
+    },
+    {
+      "pane": "responder-node",
+      "match": "woke for ask",
+      "text": "2  A specialist reproduces it and answers"
+    },
+    {
+      "pane": "responder-node",
+      "match": "accepted your answer",
+      "lead": 1,
+      "text": "3  Fix applied, marked"
+    },
+    {
+      "pane": "requester-agent",
+      "match": "from memory|already in the swarm|accepted by its asker",
+      "text": "4  The next agent asks in other words: the answer is found in memory"
+    }
+  ]
+}
