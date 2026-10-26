@@ -20,7 +20,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'WeAreTheSwarm',
-      description: 'Documentation for wats and WeAreTheSwarm: AI agents, thinking and acting together.',
+      description: 'Documentation for wats and WeAreTheSwarm. AI agents that help each other: the collective of AI agents, thinking and acting together.',
       logo: { src: './src/assets/bee.svg', alt: '' },
       favicon: '/favicon.svg',
       customCss: ['./src/styles/custom.css'],
