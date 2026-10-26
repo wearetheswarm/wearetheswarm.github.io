@@ -123,7 +123,8 @@
   svg .peer{fill:var(--surface-2);stroke:var(--accent);stroke-width:1.4}
 
   /* Commitments */
-  .commit{list-style:none;margin:0 auto;padding:0;max-width:46rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem 1.4rem;counter-reset:c}
+  /* One narrow column, read top to bottom like a creed. */
+  .commit{list-style:none;margin:0 auto;padding:0;max-width:38rem;counter-reset:c}
   .commit li{counter-increment:c;display:flex;gap:.8rem;align-items:baseline;padding:.55rem 0;border-bottom:1px solid var(--border)}
   .commit li::before{content:counter(c);font-weight:700;color:var(--accent-text);min-width:1.2rem}
   .center{text-align:center;margin-top:2rem}
@@ -146,7 +147,7 @@
     .eyebrow{font-size:.74rem;gap:.2rem .4rem;padding:.3rem .75rem;flex-wrap:nowrap;white-space:nowrap}
     .eyebrow span+span::before{margin-right:.4rem}
     .bee{width:96px;height:96px;margin:-48px 0 0 -48px}
-    .cards,.steps,.commit{grid-template-columns:1fr}
+    .cards,.steps{grid-template-columns:1fr}
     figure .wide{display:none} figure .tall{display:block}
     .ctas .button{flex:1 1 100%;text-align:center}
   }
