@@ -12,7 +12,7 @@ The folder itself is not published. Only what `film.mjs` writes to `site/demo/` 
 | `casts/` | Input, not committed: the four recordings (`requester-agent`, `requester-node`, `responder-agent`, `responder-node`) as `.cast` files, each with a `.start` file holding its start time in epoch seconds |
 | `beats.json` | The storyboard, beat by beat: the pane, the real lines it types (trimmed with "…" only), the captions, and the schematic cues (`net`, `memory`, `spread`), plus the intro and end card copy |
 | `beats.mjs` | Checks every storyboard line against the casts: each piece between "…" must appear, in order, in one line of a line-based pane, or in one rendered screen of Claude Code. It also checks real-time order. Then it writes `build/storyboard.json`. It stops on any line that isn't real |
-| `storyboard.html`, `.css`, `.js` | The storyboard page. Desktop shows the two machines; mobile shows one column per beat, with a network bar and a memory chip |
+| `storyboard.html`, `.css`, `.js` | The storyboard page. Desktop shows the two machines; mobile shows one column per beat, with a network bar (the copies on other nodes at its end) and a memory chip |
 | `edits.json`, `prepare.mjs` | For the full replay: clean the casts and put them on one shared, compressed clock. Lines are only dropped, dimmed or blanked, and home directory paths are blanked. Writes `build/*.cast` and `build/timeline.json` |
 | `replay.html`, `.css`, `.js` | The four-terminal replay page |
 | `film.mjs` | Films a page frame by frame and encodes WebM, MP4 and a poster for desktop and mobile with ffmpeg: `--page storyboard` (default) or `--page replay` |
