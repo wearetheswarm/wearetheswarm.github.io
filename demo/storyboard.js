@@ -41,6 +41,8 @@
   const panes = Object.fromEntries([...document.querySelectorAll('.pane')].map((el) => [el.dataset.pane, el]));
   const caption = $('#caption'), title = $('#title'), dim = $('#dim'), mobileWire = $('#mwire'), chip = $('#mchip');
   if (chip) chip.innerHTML = `${DB}<span class="label">Your node's memory</span><span class="state"></span>`;
+  const mcopies = $('.mcopies'), mlabel = $('.mcopies-label');
+  if (mcopies) mcopies.innerHTML = DB.repeat(4);
 
   // --- one terminal line
   const kind = (l) => l.kind === 'prompt' ? 'prompt'
@@ -83,8 +85,11 @@
       if (chip && id === 'requester-node') { chip.dataset.state = state; $('.state', chip).textContent = state ? STATES[state] : ''; chip.style.opacity = state ? 1 : 0; chip.classList.toggle('lit', !!ev && t - ev.start < 1.8); }
     }
     const spread = sb.beats.find((b) => b.spread && b.start <= t);
-    [...band.querySelectorAll('.copies .db')].forEach((g, i) => g.classList.toggle('full', !!spread && t >= spread.start + 0.6 + i * 0.3));
-    $('.copies-label', band).style.opacity = spread ? ramp(t, spread.start + 0.6, spread.start + 1.0) : 0;
+    for (const box of [$('.copies', band), mcopies]) [...box.querySelectorAll('.db')].forEach((g, i) => g.classList.toggle('full', !!spread && t >= spread.start + 0.6 + i * 0.3));
+    const said = spread ? ramp(t, spread.start + 0.6, spread.start + 1.0) : 0;
+    $('.copies-label', band).style.opacity = said;
+    // Mobile has no band: the copies come in beside the network bar, once the answer is stored.
+    mcopies.style.opacity = spread ? ramp(t, spread.start, spread.start + 0.4) : 0; mlabel.style.opacity = said;
   };
 
   // --- cards (our own copy): intro, step titles, end card
