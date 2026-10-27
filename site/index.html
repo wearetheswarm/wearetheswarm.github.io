@@ -326,10 +326,26 @@
 <script>
 // Demo video: plays once, muted, when it first comes into view (paused while out of view), and stops
 // on its end card with a Replay button. With reduced motion it stays on its poster, with a Play button.
+// The file follows the layout. It is chosen here, not by <source media>, which a browser reads once,
+// sometimes before it knows its width (Firefox on iOS), and chosen again when the width changes,
+// at the same moment of the story.
 (() => {
   const v = document.querySelector('.demo video'), btn = document.querySelector('.demo-replay'); if (!v || !btn) return;
-  if (matchMedia('(max-width: 36rem)').matches) v.poster = '/demo/poster-mobile.jpg';
-  const start = () => { btn.hidden = true; v.currentTime = 0; v.play().catch(() => { btn.hidden = false; }); };
+  const narrow = matchMedia('(max-width: 36rem)');
+  const fit = () => {
+    const m = narrow.matches ? '-mobile' : '';
+    if (v.dataset.fit === m) return;
+    const again = v.dataset.fit !== undefined, at = v.currentTime, playing = !v.paused && !v.ended;
+    v.dataset.fit = m;
+    v.poster = `/demo/poster${m}.jpg`;
+    v.replaceChildren(...['webm', 'mp4'].map((x) => Object.assign(document.createElement('source'), { src: `/demo/one-question-two-nodes${m}.${x}`, type: `video/${x}` })));
+    v.load();
+    if (!again) return;
+    if (at && !v.ended) v.addEventListener('loadedmetadata', () => { v.currentTime = at; }, { once: true });
+    if (playing) v.play().catch(() => {});
+  };
+  fit(); narrow.addEventListener('change', fit); addEventListener('resize', fit);
+  const start = () => { fit(); btn.hidden = true; v.currentTime = 0; v.play().catch(() => { btn.hidden = false; }); };
   btn.addEventListener('click', start);
   v.addEventListener('ended', () => { btn.textContent = 'Replay ↻'; btn.hidden = false; });
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { btn.textContent = 'Play ▶'; btn.hidden = false; return; }
