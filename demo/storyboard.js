@@ -139,6 +139,7 @@
 
   window.replay = {
     duration: sb.duration,
+    poster: sb.poster,
     async renderAt(t) { draw(t); await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); },
   };
   if (q.get('frames')) { draw(0); document.documentElement.dataset.ready = '1'; return; }

@@ -23,7 +23,7 @@ const pageName = args.page || 'storyboard';
 // The poster is what shows before playback (and instead of it, with reduced motion): the storyboard's
 // intro card, or the replay's last frame with all four panels filled.
 const { name, poster, mobileHeight, posterAt } = {
-  storyboard: { name: 'one-question-two-nodes', poster: 'poster', mobileHeight: 520, posterAt: () => 2.4 },
+  storyboard: { name: 'one-question-two-nodes', poster: 'poster', mobileHeight: 520, posterAt: (d, p) => p ?? 2.4 },
   replay: { name: 'four-terminals', poster: 'four-terminals-poster', mobileHeight: 460, posterAt: (d) => Math.max(0, d - 0.5) },
 }[pageName];
 const layouts = {
@@ -59,7 +59,7 @@ try {
     const page = await browser.newPage({ viewport: L.viewport, deviceScaleFactor: L.scale });
     await page.goto(`${base}/${pageName}.html?frames=1&layout=${key}${args.query ? `&${args.query}` : ''}`);
     await page.waitForFunction(() => document.documentElement.dataset.ready === '1', null, { timeout: 30000 });
-    const duration = await page.evaluate(() => window.replay.duration);
+    const duration = await page.evaluate(() => window.replay.duration), posterHint = await page.evaluate(() => window.replay.poster);
     const shot = async (t, opts) => { await page.evaluate((x) => window.replay.renderAt(x), t); return page.screenshot(opts); };
 
     if (args.stills) {
@@ -70,7 +70,7 @@ try {
     }
 
     // Poster: the end, with all four panels filled (shown when motion is reduced, and before playback).
-    await shot(posterAt(duration), { path: path.join(outDir, `${poster}${L.suffix}.jpg`), type: 'jpeg', quality: 85 });
+    await shot(posterAt(duration, posterHint), { path: path.join(outDir, `${poster}${L.suffix}.jpg`), type: 'jpeg', quality: 85 });
 
     const frames = Math.ceil(duration * fps);
     const out = path.join(outDir, `${name}${L.suffix}`);
