@@ -70,7 +70,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/
 .mobile .world{display:block;position:relative;flex:none;height:390px}
 .mobile .machine{display:contents}
 .mobile .machine h3,.mobile .band{display:none}
-.mobile .cols{display:block;position:relative;height:100%}
+/* Both machines' columns lie over the world, so each pane fills it in turn. */
+.mobile .cols{display:block;position:absolute;inset:0}
 .mobile .pane{position:absolute;inset:0}
 .mobile .pane .where{display:block;margin-bottom:2px;font:600 11px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .mobile .pane h2{font-size:20px}
