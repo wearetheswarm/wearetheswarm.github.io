@@ -178,7 +178,8 @@ function adrSummary(body) {
 // of the guides (a section, a list item, or a paragraph with the code
 // block and pointer after it). Remove this once the wrappers are out.
 const UNPUBLISHED = /Via npx or uvx \(once published\)/;
-const PLACEHOLDERS = /Via npx or uvx|@wearetheswarm\/wats|wearetheswarm-wats/;
+// Before 0.5.8 the wrappers were unpublished, with placeholder names.
+const PLACEHOLDERS = /Via npx or uvx \(once published\)|wearetheswarm-wats/;
 function dropUnpublished(markdown, from) {
   const lines = markdown.split('\n');
   const out = [];
@@ -241,6 +242,59 @@ function dropUnpublished(markdown, from) {
   return result;
 }
 
+// From 0.5.8 the pages offer `npx` and `uvx`. The npm package is out; the
+// PyPI one may not be yet. While PyPI has no `wats` of this version, each
+// page that offers uvx gets a note under its first mention.
+const version = tag.replace(/^v/, '');
+const uvxLive = /^\d+\.\d+\.\d+$/.test(version)
+  ? (await fetch(`https://pypi.org/pypi/wats/${version}/json`).catch(() => null))?.ok === true
+  : false;
+if (!uvxLive) console.log(`import-wats: no wats ${version} on PyPI: uvx marked not available yet`);
+const UVX_NOTE = [
+  ':::note[uvx is not available yet]',
+  'The PyPI package is not published yet, so `uvx wats` does not work.',
+  'Use `npx -y @wearetheswarm/wats`, or [install wats](/docs/start/install/).',
+  ':::',
+];
+function noteUvx(markdown) {
+  if (uvxLive) return markdown;
+  const lines = markdown.split('\n');
+  const blank = (l) => l.trim() === '';
+  let fence = false;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].startsWith('```')) fence = !fence;
+    if (fence || !/Via npx or uvx/.test(lines[i])) continue;
+    const item = lines[i].match(/^(\s*)[-*] /);
+    let end = i + 1, pad = '';
+    if (/^#{2,6} /.test(lines[i])) {
+      end = i + 1;
+    } else if (item) {
+      pad = ' '.repeat(item[0].length);
+      while (end < lines.length && !blank(lines[end]) && lines[end].search(/\S/) > item[1].length) end++;
+    } else {
+      while (end < lines.length && !blank(lines[end])) end++;
+      // A paragraph that ends with ":" introduces the code block after it.
+      let next = end;
+      while (next < lines.length && blank(lines[next])) next++;
+      if (/:\s*$/.test(lines[end - 1]) && lines[next]?.startsWith('```')) {
+        end = next + 1;
+        while (end < lines.length && !lines[end].startsWith('```')) end++;
+        end++;
+        // The sentence may go on after the block ("or …").
+        next = end;
+        while (next < lines.length && blank(lines[next])) next++;
+        if (/^[a-z(`]/.test(lines[next] ?? '')) {
+          end = next;
+          while (end < lines.length && !blank(lines[end])) end++;
+        }
+      }
+    }
+    lines.splice(end, 0, '', ...UVX_NOTE.map((l) => pad + l), '');
+    return lines.join('\n');
+  }
+  return markdown;
+}
+
 const yaml = (s) => JSON.stringify(s); // JSON strings are valid YAML
 
 rmSync(OUT, { recursive: true, force: true });
@@ -258,7 +312,8 @@ for (const page of pages) {
   }
   let md = raw.slice(raw.indexOf(h1[0]) + h1[0].length);
   if (!page.adr) md = dropUnpublished(md, page.src);
-  const body = rewriteLinks(md, page.src).trim();
+  let body = rewriteLinks(md, page.src).trim();
+  if (!page.adr) body = noteUvx(body); // after rewriteLinks: its link is the site's
   const source = blob(page.src);
   // A discreet line at the bottom: where the page comes from. Fixes go to
   // the wats repository.

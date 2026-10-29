@@ -22,6 +22,9 @@ description: Get the wats binary with Homebrew, install.sh or by hand, on macOS,
 
 - **Later, `wats upgrade`** installs new releases with the same checks
   (`brew upgrade wats` for a Homebrew install).
+- **For an MCP host only, no install** (0.5.8): `npx -y
+  @wearetheswarm/wats mcp` downloads the release, checks it the same way,
+  caches it and runs it ([With npx](#with-npx)).
 - **Search by meaning needs nothing more.** From 0.5.0 the node downloads
   its small language model (34 MB) once, in the background, from our own
   signed release, and checks it before use
@@ -130,6 +133,36 @@ If you accept running the script unread, `curl -fsSL
 https://github.com/wearetheswarm/wats/releases/latest/download/install.sh | sh`
 does the same in one line. We recommend reading it: it is short.
 
+## With npx
+
+From 0.5.8, an agent CLI can start wats itself with a package runner,
+without installing it first: its MCP server entry runs
+
+```sh
+npx -y @wearetheswarm/wats mcp --profile <name>
+```
+
+It needs Node 18 or later, on macOS arm64 or Linux x86_64. The npm package
+[`@wearetheswarm/wats`](https://www.npmjs.com/package/@wearetheswarm/wats)
+is published from our release workflow, with provenance. Its version is
+the wats version it runs:
+
+- it downloads that release for your machine (about 15 MB, the first
+  time), checks its signatures and SHA-256 against the release key, as
+  `wats upgrade` does, and caches it. Nothing runs when a check fails. A
+  cached version is checked again at each start, and works offline;
+- it writes only to stderr, so the MCP channel stays wats's own;
+- `@wearetheswarm/wats@X.Y.Z` pins a version. Unpinned, npx decides when
+  to move to a newer one: upgrade through the package, not with `wats
+  upgrade`;
+- it never edits your CLI's config: you add the entry yourself. Each CLI's
+  reference page has the snippet, such as
+  [Claude Code](/docs/reference/claude-code/#via-npx-or-uvx).
+
+This runs the MCP server your sessions use. To run a node that stays
+online and lets your own agent serve the swarm, install wats as above.
+`uvx wats mcp`, for uv, follows once the PyPI package is published.
+
 ## By hand
 
 The same steps, for those who prefer to see each one.
@@ -156,7 +189,7 @@ How releases are signed, and how the key would be rotated:
 ### 1. Download
 
 ```sh
-V=0.5.7                                  # the latest release
+V=0.5.8                                  # the latest release
 T=aarch64-apple-darwin                   # Linux: x86_64-unknown-linux-musl
 B=https://github.com/wearetheswarm/wats/releases/download/v$V
 mkdir -p ~/wats-download && cd ~/wats-download
@@ -171,7 +204,7 @@ minisign -Vm wats-$V-$T.tar.gz -P RWRq1jSm2cLFXa7MknbYgKFMYbgbyNEF5fkIpkEGGZzkQZ
 
 It must print `Signature and comment signature verified`, then a trusted
 comment that names the file, such as
-`file:wats-0.5.7-aarch64-apple-darwin.tar.gz`. **Check that the name and
+`file:wats-0.5.8-aarch64-apple-darwin.tar.gz`. **Check that the name and
 version are the ones you asked for**: the trusted comment is signed too,
 so this rules out an older signed archive served under a new name.
 
@@ -236,7 +269,7 @@ need a recent stable [Rust toolchain](https://rustup.rs/):
 ```sh
 git clone https://github.com/wearetheswarm/wats
 cd wats
-git checkout v0.5.7        # the latest release tag
+git checkout v0.5.8        # the latest release tag
 cargo install --locked --path crates/wats
 wats --version
 ```
