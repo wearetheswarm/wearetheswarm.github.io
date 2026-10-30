@@ -244,7 +244,7 @@ function dropUnpublished(markdown, from) {
 
 // From 0.5.8 the pages offer `npx` and `uvx`. The npm package is out; the
 // PyPI one may not be yet. While PyPI has no `wats` of this version, each
-// page that offers uvx gets a note under its first mention.
+// page that offers uvx without saying so gets a note under its first mention.
 const version = tag.replace(/^v/, '');
 const uvxLive = /^\d+\.\d+\.\d+$/.test(version)
   ? (await fetch(`https://pypi.org/pypi/wats/${version}/json`).catch(() => null))?.ok === true
@@ -257,7 +257,8 @@ const UVX_NOTE = [
   ':::',
 ];
 function noteUvx(markdown) {
-  if (uvxLive) return markdown;
+  // From 0.5.9 each page says so itself.
+  if (uvxLive || /until\s+`uvx wats --version`\s+works/.test(markdown)) return markdown;
   const lines = markdown.split('\n');
   const blank = (l) => l.trim() === '';
   let fence = false;

@@ -6,7 +6,8 @@ description: Get the wats binary with Homebrew, install.sh or by hand, on macOS,
 ## In short
 
 - **One binary, `wats`.** Prebuilt for **macOS on Apple silicon** and
-  **Linux x86_64** (static, so it runs on any distribution). On Windows, use
+  **Linux on x86_64 or arm64** (arm64 from 0.5.9; static, so it runs on
+  any distribution). On Windows, use
   the Linux binary in **WSL**. Elsewhere, build it from source.
 - **With Homebrew:** `brew install wearetheswarm/tap/wats`, and later
   `brew upgrade wats`.
@@ -34,7 +35,7 @@ description: Get the wats binary with Homebrew, install.sh or by hand, on macOS,
   willing to experiment with.
 
 ```sh
-brew install wearetheswarm/tap/wats    # macOS Apple silicon, Linux x86_64
+brew install wearetheswarm/tap/wats    # macOS Apple silicon, Linux x86_64 or arm64
 wats --version
 ```
 
@@ -52,7 +53,7 @@ Next: [first run](/docs/start/first-run/).
 
 ## With Homebrew
 
-On macOS with Apple silicon and Linux on x86_64:
+On macOS with Apple silicon and Linux on x86_64 or arm64:
 
 ```sh
 brew install wearetheswarm/tap/wats
@@ -112,7 +113,8 @@ The trusted comment it prints must say `file:install.sh`.
 
 The script:
 
-1. picks the archive for your machine (macOS arm64 or Linux x86_64) and
+1. picks the archive for your machine (macOS arm64, Linux x86_64 or
+   Linux arm64) and
    the latest release, or the one you name with `--version X.Y.Z`;
 2. downloads it with its checksum and both signatures;
 3. checks both signatures against the public key written in the script,
@@ -142,7 +144,8 @@ without installing it first: its MCP server entry runs
 npx -y @wearetheswarm/wats mcp --profile <name>
 ```
 
-It needs Node 18 or later, on macOS arm64 or Linux x86_64. The npm package
+It needs Node 18 or later, on macOS arm64, Linux x86_64 or Linux arm64
+(from 0.5.9). The npm package
 [`@wearetheswarm/wats`](https://www.npmjs.com/package/@wearetheswarm/wats)
 is published from our release workflow, with provenance. Its version is
 the wats version it runs:
@@ -173,8 +176,9 @@ The same steps, for those who prefer to see each one.
 |---|---|
 | Mac with Apple silicon (M1 and later) | `wats-<version>-aarch64-apple-darwin.tar.gz` |
 | Linux on x86_64, any distribution | `wats-<version>-x86_64-unknown-linux-musl.tar.gz` |
+| Linux on arm64, any distribution (from 0.5.9) | `wats-<version>-aarch64-unknown-linux-musl.tar.gz` |
 | Windows 10 or 11 | the Linux archive, inside WSL ([below](#windows-wsl)) |
-| Intel Mac, Linux on ARM, others | [build from source](#build-from-source) |
+| Intel Mac, others | [build from source](#build-from-source) |
 
 Each archive comes with three more files:
 
@@ -189,8 +193,8 @@ How releases are signed, and how the key would be rotated:
 ### 1. Download
 
 ```sh
-V=0.5.8                                  # the latest release
-T=aarch64-apple-darwin                   # Linux: x86_64-unknown-linux-musl
+V=0.5.9                                  # the latest release
+T=aarch64-apple-darwin                   # Linux: x86_64- or aarch64-unknown-linux-musl
 B=https://github.com/wearetheswarm/wats/releases/download/v$V
 mkdir -p ~/wats-download && cd ~/wats-download
 for f in wats-$V-$T.tar.gz{,.minisig,.sha256,.sha256.minisig}; do curl -fsSLO "$B/$f"; done
@@ -204,7 +208,7 @@ minisign -Vm wats-$V-$T.tar.gz -P RWRq1jSm2cLFXa7MknbYgKFMYbgbyNEF5fkIpkEGGZzkQZ
 
 It must print `Signature and comment signature verified`, then a trusted
 comment that names the file, such as
-`file:wats-0.5.8-aarch64-apple-darwin.tar.gz`. **Check that the name and
+`file:wats-0.5.9-aarch64-apple-darwin.tar.gz`. **Check that the name and
 version are the ones you asked for**: the trusted comment is signed too,
 so this rules out an older signed archive served under a new name.
 
@@ -269,7 +273,7 @@ need a recent stable [Rust toolchain](https://rustup.rs/):
 ```sh
 git clone https://github.com/wearetheswarm/wats
 cd wats
-git checkout v0.5.8        # the latest release tag
+git checkout v0.5.9        # the latest release tag
 cargo install --locked --path crates/wats
 wats --version
 ```
