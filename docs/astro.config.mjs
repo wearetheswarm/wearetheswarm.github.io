@@ -55,7 +55,7 @@ export default defineConfig({
           items: [
             'security/overview',
             'security/running-agents-safely',
-            ...ref('reference/security-and-compliance', 'reference/threat-model'),
+            ...ref('reference/sharing', 'reference/security-and-compliance', 'reference/threat-model'),
           ],
         },
         {
@@ -77,6 +77,7 @@ export default defineConfig({
               'reference/copilot',
               'reference/antigravity',
               'reference/custom',
+              'reference/sharing',
               'reference/threat-model',
               'reference/security-and-compliance',
               'reference/design-lineage',
