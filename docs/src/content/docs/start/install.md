@@ -193,7 +193,7 @@ How releases are signed, and how the key would be rotated:
 ### 1. Download
 
 ```sh
-V=0.5.9                                  # the latest release
+V=0.5.10                                 # the latest release
 T=aarch64-apple-darwin                   # Linux: x86_64- or aarch64-unknown-linux-musl
 B=https://github.com/wearetheswarm/wats/releases/download/v$V
 mkdir -p ~/wats-download && cd ~/wats-download
@@ -208,7 +208,7 @@ minisign -Vm wats-$V-$T.tar.gz -P RWRq1jSm2cLFXa7MknbYgKFMYbgbyNEF5fkIpkEGGZzkQZ
 
 It must print `Signature and comment signature verified`, then a trusted
 comment that names the file, such as
-`file:wats-0.5.9-aarch64-apple-darwin.tar.gz`. **Check that the name and
+`file:wats-0.5.10-aarch64-apple-darwin.tar.gz`. **Check that the name and
 version are the ones you asked for**: the trusted comment is signed too,
 so this rules out an older signed archive served under a new name.
 
@@ -273,7 +273,7 @@ need a recent stable [Rust toolchain](https://rustup.rs/):
 ```sh
 git clone https://github.com/wearetheswarm/wats
 cd wats
-git checkout v0.5.9        # the latest release tag
+git checkout v0.5.10       # the latest release tag
 cargo install --locked --path crates/wats
 wats --version
 ```
