@@ -3,6 +3,13 @@ title: Upgrading
 description: Install new releases with wats upgrade or Homebrew, roll back, and choose whether your node upgrades by itself.
 ---
 
+:::danger[Still on 0.5.10 or older? Upgrade now]
+0.5.11 fixes memory spikes that could take a node from 50 MB to several
+GB in seconds. Every earlier version can hit them, with or without an
+agent. Run `wats upgrade` (or `brew upgrade wats`), then restart the node.
+See [Upgrading to 0.5.11](#upgrading-to-0511).
+:::
+
 :::caution[0.4.8: `mcp__<server>__<tool>` in `agent.tools` now narrows that server]
 If `agent.tools` names a tool of an MCP server (`mcp__crm__search`), the
 agent may use only the tools named of that server, Claude Code workspace
@@ -167,7 +174,7 @@ that installs it, in `wats status`, in the `status` tool (for your agent
 to tell you), and once at node start, in the log and the banner.
 
 A later release does not hide a security fix: each release ships a signed
-`security.json` naming the last security release (0.4.2 today). A node
+`security.json` naming the last security release (0.5.11 today). A node
 older than that sees the latest release as a security release, whatever
 its notes say. See
 [Release signing](/docs/reference/release-signing/).
@@ -231,6 +238,34 @@ that opted in at once, and a release cannot be pulled back yet.
 the same JSON as the GitHub releases API. The mirror is not trusted: it
 can withhold releases, but it cannot forge one, because the signature is
 checked against the key in the binary.
+
+## Upgrading to 0.5.11
+
+**Upgrade now:** `wats upgrade` (or `brew upgrade wats`), then restart
+the node. No network change and no store change: 0.5.11 nodes work with
+older nodes and relays. Notes:
+[0.5.11 release](https://github.com/wearetheswarm/wats/releases/tag/v0.5.11).
+
+**This is a security release**: a peer could make a node run out of
+memory. The security floor is now 0.5.11, so every older node sees it as
+a security release. A node that said yes to security updates in `wats
+setup` installs it by itself once it is `update.security_delay` old;
+restart the node to run it.
+
+What changes:
+
+- **The memory spikes are fixed.** A node could grow from 50 MB to
+  several GB within seconds, with its cores pegged, until the connection
+  closed or the system killed it. The cause was in the network library,
+  iroh 1.3
+  ([n0-computer/iroh#4390](https://github.com/n0-computer/iroh/issues/4390)),
+  so a node with no agent was affected too. 0.5.11 moves to iroh 1.4.1
+  and noq 1.4.0.
+- **A memory watch in the node.** Every 10 s the node reads its memory.
+  When it crosses 256 MiB, 512 MiB, 1 GiB and so on, the log gets one
+  warning saying what the node was doing. A node that was blocked for 5 s
+  or more logs it too. A node at rest logs nothing. See
+  [My node uses a lot of memory](/docs/operate/troubleshooting/#my-node-uses-a-lot-of-memory).
 
 ## Upgrading to 0.5.10
 
