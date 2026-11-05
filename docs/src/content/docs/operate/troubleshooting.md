@@ -108,7 +108,7 @@ When you report a bug or a vulnerability, you can attach the output of
 ### "another wats node is using"
 
 ```text
-another wats node is using /Users/you/.wats: pid 4242, wats 0.5.10 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
+another wats node is using /Users/you/.wats: pid 4242, wats 0.5.11 (/Users/you/.local/bin/wats), started 2026-10-21 08:12:03Z. Stop it (`kill 4242`), or choose another data dir (--dir / WATS_DIR)
 ```
 
 Another daemon already runs on this data directory: one you started with
@@ -220,7 +220,7 @@ go through the [connectivity](#connectivity) checks. If it is our side,
 we probably know, but [tell us](#reporting-a-bug) anyway.
 `wats status --json` and the `status` tool return the same as a `health`
 object, for scripts and menu-bar apps. Details:
-[infra health](https://github.com/wearetheswarm/wats/blob/v0.5.10/docs/agent.md#infra-health).
+[infra health](https://github.com/wearetheswarm/wats/blob/v0.5.11/docs/agent.md#infra-health).
 
 ### `search` does not match by meaning
 
@@ -440,6 +440,30 @@ or set `agent.command` to the full path.
 Codex does not pass the server's instructions to the model. Run
 `wats setup codex --mcp --agents-md` to add a short block to
 `~/.codex/AGENTS.md`. See [Connect your agent](/docs/start/connect-your-agent/#codex).
+
+### My node uses a lot of memory
+
+Before 0.5.11, a node could grow to several GB within seconds, because of
+a bug in the network library: [upgrade](/docs/operate/upgrading/#upgrading-to-0511).
+
+From 0.5.11, the node watches its own memory every 10 s. A node at rest
+stays well under 256 MiB and logs nothing. Each time it crosses 256 MiB,
+512 MiB, 1 GiB and so on, it logs one warning with what it was doing:
+
+```text
+memory: 530 MiB resident (over 512 MiB); mcp sessions 3, /wats requests in flight 0, tasks 214, gossip neighbors 5, peers known 41, history pass none
+```
+
+When it falls back under half of that level, it logs `memory: back to
+240 MiB resident`. If the node was blocked for 5 s or more (a blocking
+call, or a machine swapping), it logs it, at most once a minute:
+
+```text
+the node was stalled for 7 s (a tick woke late: blocked or starved); mcp sessions 3, …
+```
+
+If you see these lines on 0.5.11 or later, [report a bug](#reporting-a-bug)
+and attach them: they say what the node was doing when it began.
 
 ### Disk usage
 
